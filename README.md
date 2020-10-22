@@ -1,28 +1,23 @@
-# template
+# mezzio-generic-authorization-acl
 
-[![Continuous Integration](https://github.com/mimmi20/template/workflows/Continuous Integration/badge.svg?branch=master)](https://github.com/mimmi20/template/actions)
-[![Close stale issues and pull requests](https://github.com/mimmi20/template/workflows/Close stale issues and pull requests/badge.svg?branch=master)](https://github.com/mimmi20/template/actions)
-[![Release](https://github.com/mimmi20/template/workflows/Release/badge.svg?branch=master)](https://github.com/mimmi20/template/actions)
-[![Renew License](https://github.com/mimmi20/template/workflows/Renew License/badge.svg?branch=master)](https://github.com/mimmi20/template/actions)
+[![Continuous Integration](https://github.com/mimmi20/mezzio-generic-authorization-acl/workflows/Continuous Integration/badge.svg?branch=master)](https://github.com/mimmi20/mezzio-generic-authorization-acl/actions)
+[![Close stale issues and pull requests](https://github.com/mimmi20/mezzio-generic-authorization-acl/workflows/Close stale issues and pull requests/badge.svg?branch=master)](https://github.com/mimmi20/mezzio-generic-authorization-acl/actions)
+[![Release](https://github.com/mimmi20/mezzio-generic-authorization-acl/workflows/Release/badge.svg?branch=master)](https://github.com/mimmi20/mezzio-generic-authorization-acl/actions)
+[![Renew License](https://github.com/mimmi20/mezzio-generic-authorization-acl/workflows/Renew License/badge.svg?branch=master)](https://github.com/mimmi20/mezzio-generic-authorization-acl/actions)
 
-[![Code Coverage](https://codecov.io/gh/mimmi20/template/branch/master/graph/badge.svg)](https://codecov.io/gh/mimmi20/template)
+[![Code Coverage](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl/branch/master/graph/badge.svg)](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl)
 
-[![Latest Stable Version](https://poser.pugx.org/mimmi20/template/v/stable)](https://packagist.org/packages/mimmi20/template)
-[![Total Downloads](https://poser.pugx.org/mimmi20/template/downloads)](https://packagist.org/packages/mimmi20/template)
+[![Latest Stable Version](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/v/stable)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
+[![Total Downloads](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/downloads)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
 
 ## Installation
 
-:bulb: This is a great place for showing how to install the package, see below:
+You can install the mezzio-generic-authorization-acl library with
+[Composer](https://getcomposer.org):
 
-Run
-
+```bash
+$ composer require mimmi20/mezzio-generic-authorization-acl
 ```
-$ composer require mimmi20/template
-```
-
-## Usage
-
-:bulb: This is a great place for showing a few usage examples!
 
 ## License
 
