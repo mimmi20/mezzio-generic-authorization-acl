@@ -15,6 +15,7 @@ use Laminas\Permissions\Acl\Acl;
 use Laminas\Permissions\Acl\Exception\ExceptionInterface as AclExceptionInterface;
 use Mezzio\GenericAuthorization\AuthorizationInterface;
 use Mezzio\GenericAuthorization\Exception;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 final class LaminasAclFactory
@@ -28,7 +29,16 @@ final class LaminasAclFactory
      */
     public function __invoke(ContainerInterface $container): AuthorizationInterface
     {
-        $config = $container->get('config')['mezzio-authorization-acl'] ?? null;
+        try {
+            $config = $container->get('config')['mezzio-authorization-acl'] ?? null;
+        } catch (ContainerExceptionInterface $e) {
+            throw new Exception\InvalidConfigException(
+                'Could not read mezzio-authorization-acl config',
+                0,
+                $e
+            );
+        }
+
         if (null === $config) {
             throw new Exception\InvalidConfigException(
                 'No mezzio-authorization-acl config provided'
@@ -119,10 +129,12 @@ final class LaminasAclFactory
     private function injectPermissions(Acl $acl, array $permissions, string $type): void
     {
         if (!in_array($type, ['allow', 'deny'], true)) {
-            throw new Exception\InvalidConfigException(sprintf(
-                'Invalid permission type "%s" provided in configuration; must be one of "allow" or "deny"',
-                $type
-            ));
+            throw new Exception\InvalidConfigException(
+                sprintf(
+                    'Invalid permission type "%s" provided in configuration; must be one of "allow" or "deny"',
+                    $type
+                )
+            );
         }
 
         foreach ($permissions as $role => $resources) {

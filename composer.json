@@ -27,6 +27,7 @@
   },
   "conflict": {
     "container-interop/container-interop": "<1.2.0",
+    "mezzio/mezzio-authorization-acl": "*",
     "phpspec/prophecy": "<1.10.2"
   },
   "require-dev": {
