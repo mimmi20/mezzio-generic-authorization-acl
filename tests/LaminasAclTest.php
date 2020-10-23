@@ -1,9 +1,14 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
@@ -15,23 +20,32 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 
-class LaminasAclTest extends TestCase
+final class LaminasAclTest extends TestCase
 {
     /** @var Acl|ObjectProphecy */
     private $acl;
 
-    protected function setUp() : void
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         $this->acl = $this->prophesize(Acl::class);
     }
 
-    public function testConstructor()
+    /**
+     * @return void
+     */
+    public function testConstructor(): void
     {
         $laminasAcl = new LaminasAcl($this->acl->reveal());
-        $this->assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    public function testIsGrantedWithoutRouteResult()
+    /**
+     * @return void
+     */
+    public function testIsGrantedWithoutRouteResult(): void
     {
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getAttribute(RouteResult::class, false)->willReturn(false);
@@ -42,7 +56,10 @@ class LaminasAclTest extends TestCase
         $laminasAcl->isGranted('foo', $request->reveal());
     }
 
-    public function testIsGranted()
+    /**
+     * @return void
+     */
+    public function testIsGranted(): void
     {
         $routeResult = $this->getSuccessRouteResult('home');
 
@@ -52,10 +69,13 @@ class LaminasAclTest extends TestCase
         $this->acl->isAllowed('foo', 'home')->willReturn(true);
         $laminasAcl = new LaminasAcl($this->acl->reveal());
 
-        $this->assertTrue($laminasAcl->isGranted('foo', $request->reveal()));
+        self::assertTrue($laminasAcl->isGranted('foo', $request->reveal()));
     }
 
-    public function testIsNotGranted()
+    /**
+     * @return void
+     */
+    public function testIsNotGranted(): void
     {
         $routeResult = $this->getSuccessRouteResult('home');
 
@@ -65,10 +85,13 @@ class LaminasAclTest extends TestCase
         $this->acl->isAllowed('foo', 'home')->willReturn(false);
         $laminasAcl = new LaminasAcl($this->acl->reveal());
 
-        $this->assertFalse($laminasAcl->isGranted('foo', $request->reveal()));
+        self::assertFalse($laminasAcl->isGranted('foo', $request->reveal()));
     }
 
-    public function testIsGrantedWithFailedRouting()
+    /**
+     * @return void
+     */
+    public function testIsGrantedWithFailedRouting(): void
     {
         $routeResult = $this->getFailureRouteResult(Route::HTTP_METHOD_ANY);
 
@@ -78,9 +101,14 @@ class LaminasAclTest extends TestCase
         $laminasAcl = new LaminasAcl($this->acl->reveal());
 
         $result = $laminasAcl->isGranted('foo', $request->reveal());
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
+    /**
+     * @param string $routeName
+     *
+     * @return \Mezzio\Router\RouteResult
+     */
     private function getSuccessRouteResult(string $routeName): RouteResult
     {
         $route = $this->prophesize(Route::class);
@@ -89,6 +117,11 @@ class LaminasAclTest extends TestCase
         return RouteResult::fromRoute($route->reveal());
     }
 
+    /**
+     * @param array|null $methods
+     *
+     * @return \Mezzio\Router\RouteResult
+     */
     private function getFailureRouteResult(?array $methods): RouteResult
     {
         return RouteResult::fromRouteFailure($methods);

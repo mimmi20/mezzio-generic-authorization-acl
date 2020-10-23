@@ -1,9 +1,14 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization\Acl;
 
 use Laminas\ServiceManager\ServiceManager;
@@ -11,43 +16,52 @@ use Mezzio\GenericAuthorization\Acl\ConfigProvider;
 use Mezzio\GenericAuthorization\Acl\LaminasAcl;
 use PHPUnit\Framework\TestCase;
 
-use function array_merge_recursive;
-use function file_get_contents;
-use function json_decode;
-use function sprintf;
-
-class ConfigProviderTest extends TestCase
+final class ConfigProviderTest extends TestCase
 {
     /** @var ConfigProvider */
     private $provider;
 
-    protected function setUp() : void
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         $this->provider = new ConfigProvider();
     }
 
-    public function testInvocationReturnsArray()
+    /**
+     * @return array
+     */
+    public function testInvocationReturnsArray(): array
     {
         $config = ($this->provider)();
-        $this->assertIsArray($config);
+        self::assertIsArray($config);
+
         return $config;
     }
 
     /**
+     * @param array $config
+     *
+     * @return void
+     *
      * @depends testInvocationReturnsArray
      */
-    public function testReturnedArrayContainsDependencies(array $config)
+    public function testReturnedArrayContainsDependencies(array $config): void
     {
-        $this->assertArrayHasKey('dependencies', $config);
-        $this->assertIsArray($config['dependencies']);
-        $this->assertArrayHasKey('factories', $config['dependencies']);
+        self::assertArrayHasKey('dependencies', $config);
+        self::assertIsArray($config['dependencies']);
+        self::assertArrayHasKey('factories', $config['dependencies']);
 
         $factories = $config['dependencies']['factories'];
-        $this->assertIsArray($factories);
-        $this->assertArrayHasKey(LaminasAcl::class, $factories);
+        self::assertIsArray($factories);
+        self::assertArrayHasKey(LaminasAcl::class, $factories);
     }
 
-    public function testServicesDefinedInConfigProvider()
+    /**
+     * @return void
+     */
+    public function testServicesDefinedInConfigProvider(): void
     {
         $config = ($this->provider)();
 
@@ -56,10 +70,12 @@ class ConfigProviderTest extends TestCase
             true
         );
         foreach ($json['packages'] as $package) {
-            if (isset($package['extra']['laminas']['config-provider'])) {
-                $configProvider = new $package['extra']['laminas']['config-provider']();
-                $config = array_merge_recursive($config, $configProvider());
+            if (!isset($package['extra']['laminas']['config-provider'])) {
+                continue;
             }
+
+            $configProvider = new $package['extra']['laminas']['config-provider']();
+            $config         = array_merge_recursive($config, $configProvider());
         }
 
         $config['dependencies']['services']['config'] = [
@@ -69,15 +85,20 @@ class ConfigProviderTest extends TestCase
 
         $dependencies = $this->provider->getDependencies();
         foreach ($dependencies['factories'] as $name => $factory) {
-            $this->assertTrue($container->has($name), sprintf('Container does not contain service %s', $name));
-            $this->assertIsObject(
+            self::assertTrue($container->has($name), sprintf('Container does not contain service %s', $name));
+            self::assertIsObject(
                 $container->get($name),
                 sprintf('Cannot get service %s from container using factory %s', $name, $factory)
             );
         }
     }
 
-    private function getContainer(array $dependencies) : ServiceManager
+    /**
+     * @param array $dependencies
+     *
+     * @return \Laminas\ServiceManager\ServiceManager
+     */
+    private function getContainer(array $dependencies): ServiceManager
     {
         return new ServiceManager($dependencies);
     }

@@ -1,22 +1,23 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
 use Mezzio\GenericAuthorization\AuthorizationInterface;
-use Mezzio\GenericAuthorization\Exception;
-use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 
-class LaminasAcl implements AuthorizationInterface
+final class LaminasAcl implements AuthorizationInterface
 {
-    /**
-     * @var Acl
-     */
+    /** @var Acl */
     private $acl;
 
     /**
@@ -34,7 +35,7 @@ class LaminasAcl implements AuthorizationInterface
      *
      * @return bool
      */
-    public function isGranted(string $role, string $resource, ?ServerRequestInterface $request = null) : bool
+    public function isGranted(string $role, string $resource, ?ServerRequestInterface $request = null): bool
     {
         return $this->acl->isAllowed($role, $resource);
     }

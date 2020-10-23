@@ -1,9 +1,14 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization\Acl;
 
 use Mezzio\GenericAuthorization\Acl\LaminasAcl;
@@ -13,17 +18,23 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 
-class LaminasAclFactoryTest extends TestCase
+final class LaminasAclFactoryTest extends TestCase
 {
     /** @var ContainerInterface|ObjectProphecy */
     private $container;
 
-    protected function setUp() : void
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         $this->container = $this->prophesize(ContainerInterface::class);
     }
 
-    public function testFactoryWithoutConfig()
+    /**
+     * @return void
+     */
+    public function testFactoryWithoutConfig(): void
     {
         $this->container->get('config')->willReturn([]);
 
@@ -33,7 +44,10 @@ class LaminasAclFactoryTest extends TestCase
         $factory($this->container->reveal());
     }
 
-    public function testFactoryWithoutLaminasAclConfig()
+    /**
+     * @return void
+     */
+    public function testFactoryWithoutLaminasAclConfig(): void
     {
         $this->container->get('config')->willReturn(['mezzio-authorization-acl' => []]);
 
@@ -43,7 +57,10 @@ class LaminasAclFactoryTest extends TestCase
         $factory($this->container->reveal());
     }
 
-    public function testFactoryWithoutResources()
+    /**
+     * @return void
+     */
+    public function testFactoryWithoutResources(): void
     {
         $this->container->get('config')->willReturn([
             'mezzio-authorization-acl' => [
@@ -57,7 +74,10 @@ class LaminasAclFactoryTest extends TestCase
         $factory($this->container->reveal());
     }
 
-    public function testFactoryWithEmptyRolesResources()
+    /**
+     * @return void
+     */
+    public function testFactoryWithEmptyRolesResources(): void
     {
         $this->container->get('config')->willReturn([
             'mezzio-authorization-acl' => [
@@ -66,18 +86,21 @@ class LaminasAclFactoryTest extends TestCase
             ],
         ]);
 
-        $factory = new LaminasAclFactory();
+        $factory    = new LaminasAclFactory();
         $laminasAcl = $factory($this->container->reveal());
-        $this->assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    public function testFactoryWithoutAllowOrDeny()
+    /**
+     * @return void
+     */
+    public function testFactoryWithoutAllowOrDeny(): void
     {
         $config = [
             'mezzio-authorization-acl' => [
                 'roles' => [
-                    'admini'      => [],
-                    'editor'      => ['administrator'],
+                    'admini' => [],
+                    'editor' => ['administrator'],
                     'contributor' => ['editor'],
                 ],
                 'resources' => [
@@ -90,12 +113,15 @@ class LaminasAclFactoryTest extends TestCase
         ];
         $this->container->get('config')->willReturn($config);
 
-        $factory = new LaminasAclFactory();
+        $factory    = new LaminasAclFactory();
         $laminasAcl = $factory($this->container->reveal());
-        $this->assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    public function testFactoryWithInvalidRole()
+    /**
+     * @return void
+     */
+    public function testFactoryWithInvalidRole(): void
     {
         $this->container->get('config')->willReturn([
             'mezzio-authorization-acl' => [
@@ -112,7 +138,10 @@ class LaminasAclFactoryTest extends TestCase
         $factory($this->container->reveal());
     }
 
-    public function testFactoryWithUnknownRole()
+    /**
+     * @return void
+     */
+    public function testFactoryWithUnknownRole(): void
     {
         $this->container->get('config')->willReturn([
             'mezzio-authorization-acl' => [
