@@ -15,83 +15,125 @@ use Mezzio\GenericAuthorization\Acl\LaminasAcl;
 use Mezzio\GenericAuthorization\Acl\LaminasAclFactory;
 use Mezzio\GenericAuthorization\Exception;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 
 final class LaminasAclFactoryTest extends TestCase
 {
-    /** @var ContainerInterface|ObjectProphecy */
-    private $container;
-
     /**
-     * @return void
-     */
-    protected function setUp(): void
-    {
-        $this->container = $this->prophesize(ContainerInterface::class);
-    }
-
-    /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
      * @return void
      */
     public function testFactoryWithoutConfig(): void
     {
-        $this->container->get('config')->willReturn([]);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn([]);
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $factory($this->container->reveal());
+        $this->expectExceptionMessage('No mezzio-authorization-acl config provided');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
     }
 
     /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
      * @return void
      */
     public function testFactoryWithoutLaminasAclConfig(): void
     {
-        $this->container->get('config')->willReturn(['mezzio-authorization-acl' => []]);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn(['mezzio-authorization-acl' => []]);
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $factory($this->container->reveal());
+        $this->expectExceptionMessage('No mezzio-authorization-acl roles configured for LaminasAcl');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
     }
 
     /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
      * @return void
      */
     public function testFactoryWithoutResources(): void
     {
-        $this->container->get('config')->willReturn([
-            'mezzio-authorization-acl' => [
-                'roles' => [],
-            ],
-        ]);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn(
+                [
+                    'mezzio-authorization-acl' => [
+                        'roles' => [],
+                    ],
+                ]
+            );
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $factory($this->container->reveal());
+        $this->expectExceptionMessage('No mezzio-authorization-acl resources configured for LaminasAcl');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
     }
 
     /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
      * @return void
      */
     public function testFactoryWithEmptyRolesResources(): void
     {
-        $this->container->get('config')->willReturn([
-            'mezzio-authorization-acl' => [
-                'roles' => [],
-                'resources' => [],
-            ],
-        ]);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn(
+                [
+                    'mezzio-authorization-acl' => [
+                        'roles' => [],
+                        'resources' => [],
+                    ],
+                ]
+            );
 
-        $factory    = new LaminasAclFactory();
-        $laminasAcl = $factory($this->container->reveal());
+        $factory = new LaminasAclFactory();
+
+        /** @var ContainerInterface $container */
+        $laminasAcl = $factory($container);
+
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
      * @return void
      */
     public function testFactoryWithoutAllowOrDeny(): void
@@ -111,56 +153,92 @@ final class LaminasAclFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->container->get('config')->willReturn($config);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn($config);
 
-        $factory    = new LaminasAclFactory();
-        $laminasAcl = $factory($this->container->reveal());
+        $factory = new LaminasAclFactory();
+
+        /** @var ContainerInterface $container */
+        $laminasAcl = $factory($container);
+
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
      * @return void
      */
     public function testFactoryWithInvalidRole(): void
     {
-        $this->container->get('config')->willReturn([
-            'mezzio-authorization-acl' => [
-                'roles' => [
-                    1 => [],
-                ],
-                'permissions' => [],
-            ],
-        ]);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn(
+                [
+                    'mezzio-authorization-acl' => [
+                        'roles' => [
+                            1 => [],
+                        ],
+                        'permissions' => [],
+                        'resources' => [],
+                    ],
+                ]
+            );
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $factory($this->container->reveal());
+        $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
     }
 
     /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
      * @return void
      */
     public function testFactoryWithUnknownRole(): void
     {
-        $this->container->get('config')->willReturn([
-            'mezzio-authorization-acl' => [
-                'roles' => [
-                    'administrator' => [],
-                ],
-                'resources' => [
-                    'admin.dashboard',
-                    'admin.posts',
-                ],
-                'allow' => [
-                    'editor' => ['admin.dashboard'],
-                ],
-            ],
-        ]);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn(
+                [
+                    'mezzio-authorization-acl' => [
+                        'roles' => [
+                            'administrator' => [],
+                        ],
+                        'resources' => [
+                            'admin.dashboard',
+                            'admin.posts',
+                        ],
+                        'allow' => [
+                            'editor' => ['admin.dashboard'],
+                        ],
+                    ],
+                ]
+            );
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $factory($this->container->reveal());
+        $this->expectExceptionMessage('Role \'editor\' not found');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
     }
 }

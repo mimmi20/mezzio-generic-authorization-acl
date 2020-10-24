@@ -27,13 +27,11 @@
   },
   "conflict": {
     "container-interop/container-interop": "<1.2.0",
-    "mezzio/mezzio-authorization-acl": "*",
-    "phpspec/prophecy": "<1.10.2"
+    "mezzio/mezzio-authorization-acl": "*"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "~2.8.0",
     "infection/infection": "~0.13.6 || ~0.18",
-    "laminas/laminas-servicemanager": "^3.4.1",
     "mimmi20/coding-standard": "~1.0.4",
     "pepakriz/phpstan-exception-rules": "~0.11.1",
     "phpstan/extension-installer": "~1.0.5",
