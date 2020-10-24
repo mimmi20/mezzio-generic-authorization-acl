@@ -33,6 +33,8 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->with('config')
             ->willReturn([]);
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
@@ -57,6 +59,8 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->with('config')
             ->willReturn(['mezzio-authorization-acl' => []]);
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
@@ -87,6 +91,8 @@ final class LaminasAclFactoryTest extends TestCase
                     ],
                 ]
             );
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
@@ -120,6 +126,8 @@ final class LaminasAclFactoryTest extends TestCase
                     ],
                 ]
             );
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
@@ -153,6 +161,7 @@ final class LaminasAclFactoryTest extends TestCase
                 ],
             ],
         ];
+
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -160,6 +169,8 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->with('config')
             ->willReturn($config);
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
@@ -193,6 +204,8 @@ final class LaminasAclFactoryTest extends TestCase
                     ],
                 ]
             );
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
@@ -232,6 +245,8 @@ final class LaminasAclFactoryTest extends TestCase
                     ],
                 ]
             );
+        $container->expects(self::never())
+            ->method('has');
 
         $factory = new LaminasAclFactory();
 
