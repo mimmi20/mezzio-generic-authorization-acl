@@ -29,14 +29,17 @@ final class LaminasAcl implements AuthorizationInterface
     }
 
     /**
-     * @param string                                        $role
-     * @param string                                        $resource
-     * @param \Psr\Http\Message\ServerRequestInterface|null $request
+     * Check if a role is granted for a resource
+     *
+     * @param string                      $role
+     * @param string                      $resource
+     * @param string|null                 $privilege
+     * @param ServerRequestInterface|null $request
      *
      * @return bool
      */
-    public function isGranted(string $role, string $resource, ?ServerRequestInterface $request = null): bool
+    public function isGranted(string $role, string $resource, ?string $privilege = null, ?ServerRequestInterface $request = null): bool
     {
-        return $this->acl->isAllowed($role, $resource);
+        return $this->acl->isAllowed($role, $resource, $privilege);
     }
 }
