@@ -17,4 +17,4 @@ parameters:
   excludes_analyse:
     - */tests/*/data/*
   ignoreErrors:
-    - '~Laminas\\Permissions\\Acl\\Exception\\ExceptionInterface is never thrown in the corresponding try block~'
+    - '~Laminas\\Permissions\\Acl\\Exception\\InvalidArgumentException is never thrown in the corresponding try block~'

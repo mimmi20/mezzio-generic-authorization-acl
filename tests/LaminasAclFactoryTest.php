@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization\Acl;
 
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Mezzio\GenericAuthorization\Acl\LaminasAcl;
 use Mezzio\GenericAuthorization\Acl\LaminasAclFactory;
 use Mezzio\GenericAuthorization\Exception;
@@ -40,6 +41,32 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl config provided');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
+     * @return void
+     */
+    public function testFactoryWithConfigException(): void
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willThrowException(new ServiceNotFoundException('test'));
+        $container->expects(self::never())
+            ->method('has');
+
+        $factory = new LaminasAclFactory();
+
+        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectExceptionMessage('Could not read mezzio-authorization-acl config');
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -199,7 +226,6 @@ final class LaminasAclFactoryTest extends TestCase
                         'roles' => [
                             1 => [],
                         ],
-                        'permissions' => [],
                         'resources' => [],
                     ],
                 ]
@@ -255,5 +281,78 @@ final class LaminasAclFactoryTest extends TestCase
 
         /* @var ContainerInterface $container */
         $factory($container);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
+     * @return void
+     */
+    public function testFactoryWithInvalidResource(): void
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::once())
+            ->method('get')
+            ->with('config')
+            ->willReturn(
+                [
+                    'mezzio-authorization-acl' => [
+                        'roles' => [
+                            'administrator' => [],
+                        ],
+                        'resources' => [1],
+                    ],
+                ]
+            );
+        $container->expects(self::never())
+            ->method('has');
+
+        $factory = new LaminasAclFactory();
+
+        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectExceptionMessage('addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
+    }
+
+    /**
+     * @ throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
+     * @throws \PHPUnit\Framework\IncompleteTestError
+     *
+     * @return void
+     */
+    public function testFactoryWithInvalidPermissions(): void
+    {
+        self::markTestIncomplete();
+//        $container = $this->getMockBuilder(ContainerInterface::class)
+//            ->disableOriginalConstructor()
+//            ->getMock();
+//        $container->expects(self::once())
+//            ->method('get')
+//            ->with('config')
+//            ->willReturn(
+//                [
+//                    'mezzio-authorization-acl' => [
+//                        'roles' => [
+//                            'administrator' => [],
+//                        ],
+//                        'resources' => [],
+//                    ],
+//                ]
+//            );
+//        $container->expects(self::never())
+//            ->method('has');
+//
+//        $factory = new LaminasAclFactory();
+//
+//        //$this->expectException(Exception\InvalidConfigException::class);
+//        //$this->expectExceptionMessage('addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface');
+//
+//        /* @var ContainerInterface $container */
+//        $factory($container);
     }
 }

@@ -12,7 +12,7 @@ declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
-use Laminas\Permissions\Acl\Exception\ExceptionInterface as AclExceptionInterface;
+use Laminas\Permissions\Acl\Exception\InvalidArgumentException;
 use Mezzio\GenericAuthorization\AuthorizationInterface;
 use Mezzio\GenericAuthorization\Exception;
 use Psr\Container\ContainerExceptionInterface;
@@ -85,14 +85,14 @@ final class LaminasAclFactory
 
                 try {
                     $acl->addRole($parent);
-                } catch (AclExceptionInterface $e) {
+                } catch (InvalidArgumentException $e) {
                     throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
                 }
             }
 
             try {
                 $acl->addRole($role, $parents);
-            } catch (AclExceptionInterface $e) {
+            } catch (InvalidArgumentException $e) {
                 throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
             }
         }
@@ -111,7 +111,7 @@ final class LaminasAclFactory
         foreach ($resources as $resource) {
             try {
                 $acl->addResource($resource);
-            } catch (AclExceptionInterface $e) {
+            } catch (InvalidArgumentException $e) {
                 throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
             }
         }
@@ -140,7 +140,7 @@ final class LaminasAclFactory
         foreach ($permissions as $role => $resources) {
             try {
                 $acl->{$type}($role, $resources);
-            } catch (AclExceptionInterface $e) {
+            } catch (InvalidArgumentException $e) {
                 throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
             }
         }
