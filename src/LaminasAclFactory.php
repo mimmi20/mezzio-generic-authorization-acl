@@ -57,7 +57,7 @@ final class LaminasAclFactory
             );
         }
 
-        $acl = new Acl();
+        $acl = $container->get(Acl::class);
 
         $this->injectRoles($acl, $config['roles']);
         $this->injectResources($acl, $config['resources']);
@@ -128,21 +128,40 @@ final class LaminasAclFactory
      */
     private function injectPermissions(Acl $acl, array $permissions, string $type): void
     {
-        if (!in_array($type, ['allow', 'deny'], true)) {
-            throw new Exception\InvalidConfigException(
-                sprintf(
-                    'Invalid permission type "%s" provided in configuration; must be one of "allow" or "deny"',
-                    $type
-                )
-            );
-        }
-
         foreach ($permissions as $role => $resources) {
-            try {
-                $acl->{$type}($role, $resources);
-            } catch (InvalidArgumentException $e) {
-                throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+            if (is_string($resources)) {
+                try {
+                    $acl->{$type}($role, $resources);
+                } catch (InvalidArgumentException $e) {
+                    throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                }
+
+                continue;
             }
+
+            if (is_array($resources)) {
+                foreach ($resources as $resource => $privileges) {
+                    if (is_numeric($resource)) {
+                        try {
+                            $acl->{$type}($role, $privileges);
+                        } catch (InvalidArgumentException $e) {
+                            throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                        }
+                    } else {
+                        try {
+                            $acl->{$type}($role, $resource, $privileges);
+                        } catch (InvalidArgumentException $e) {
+                            throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                        }
+                    }
+                }
+
+                continue;
+            }
+
+            throw new Exception\InvalidConfigException(
+                'the resources must be defined as string or as an array if you want to define privileges'
+            );
         }
     }
 }

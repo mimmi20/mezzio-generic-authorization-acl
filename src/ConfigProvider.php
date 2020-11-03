@@ -11,6 +11,9 @@
 declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization\Acl;
 
+use Laminas\Permissions\Acl\Acl;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+
 final class ConfigProvider
 {
     /**
@@ -30,6 +33,7 @@ final class ConfigProvider
     {
         return [
             'factories' => [
+                Acl::class => InvokableFactory::class,
                 LaminasAcl::class => LaminasAclFactory::class,
             ],
         ];
