@@ -4,10 +4,11 @@
   "description": "Provides a laminas-permissions-acl adapter for mezzio-generic-authorization.",
   "keywords": [
     "mezzio",
-    "acl",
     "authorization",
     "middleware",
-    "psr-7"
+    "psr-7",
+    "psr-15",
+    "acl"
   ],
   "homepage": "https://github.com/mimmi20/mezzio-generic-authorization-acl",
   "license": "MIT",
