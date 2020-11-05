@@ -18,3 +18,4 @@ parameters:
     - */tests/*/data/*
   ignoreErrors:
     - '~Laminas\\Permissions\\Acl\\Exception\\InvalidArgumentException is never thrown in the corresponding try block~'
+    - '~PHPDoc tag @throws with type .* is not subtype of Throwable~'
