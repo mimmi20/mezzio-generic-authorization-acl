@@ -24,6 +24,7 @@ final class LaminasAclFactory
      * @param \Psr\Container\ContainerInterface $container
      *
      * @throws Exception\InvalidConfigException
+     * @throws \Psr\Container\ContainerExceptionInterface
      *
      * @return \Mezzio\GenericAuthorization\AuthorizationInterface
      */
