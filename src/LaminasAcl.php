@@ -40,6 +40,10 @@ final class LaminasAcl implements AuthorizationInterface
      */
     public function isGranted(?string $role = null, ?string $resource = null, ?string $privilege = null, ?ServerRequestInterface $request = null): bool
     {
+        if (null === $resource && null === $privilege) {
+            return true;
+        }
+
         return $this->acl->isAllowed($role, $resource, $privilege);
     }
 }

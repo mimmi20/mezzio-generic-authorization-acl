@@ -57,4 +57,28 @@ final class LaminasAclTest extends TestCase
 
         self::assertFalse($laminasAcl->isGranted($role, $resource));
     }
+
+    /**
+     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testIsGrantedWithoutResourceAndPrivilege(): void
+    {
+        $role     = 'foo';
+
+        $acl = $this->getMockBuilder(Acl::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $acl->expects(self::never())
+            ->method('isAllowed');
+
+        /** @var Acl $acl */
+        $laminasAcl = new LaminasAcl($acl);
+
+        self::assertTrue($laminasAcl->isGranted($role));
+    }
 }
