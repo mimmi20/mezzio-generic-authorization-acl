@@ -59,7 +59,6 @@ final class LaminasAclTest extends TestCase
     }
 
     /**
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
      * @throws \PHPUnit\Framework\ExpectationFailedException
      * @throws \PHPUnit\Framework\MockObject\RuntimeException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
