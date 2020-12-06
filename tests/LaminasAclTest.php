@@ -67,7 +67,7 @@ final class LaminasAclTest extends TestCase
      */
     public function testIsGrantedWithoutResourceAndPrivilege(): void
     {
-        $role     = 'foo';
+        $role = 'foo';
 
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
