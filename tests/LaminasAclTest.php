@@ -39,7 +39,32 @@ final class LaminasAclTest extends TestCase
      *
      * @return void
      */
-    public function testIsNotGranted(): void
+    public function testIsNotGrantedWithoutResource(): void
+    {
+        $role = 'foo';
+
+        $acl = $this->getMockBuilder(Acl::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $acl->expects(self::never())
+            ->method('hasResource');
+        $acl->expects(self::never())
+            ->method('isAllowed');
+
+        /** @var Acl $acl */
+        $laminasAcl = new LaminasAcl($acl);
+
+        self::assertTrue($laminasAcl->isGranted($role));
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testIsNotGrantedWithUnknownResource(): void
     {
         $role     = 'foo';
         $resource = 'bar';
@@ -48,14 +73,46 @@ final class LaminasAclTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $acl->expects(self::once())
-            ->method('isAllowed')
-            ->with($role, $resource)
+            ->method('hasResource')
+            ->with($resource)
             ->willReturn(false);
+        $acl->expects(self::never())
+            ->method('isAllowed');
 
         /** @var Acl $acl */
         $laminasAcl = new LaminasAcl($acl);
 
         self::assertFalse($laminasAcl->isGranted($role, $resource));
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testIsGranted(): void
+    {
+        $role     = 'foo';
+        $resource = 'bar';
+
+        $acl = $this->getMockBuilder(Acl::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $acl->expects(self::once())
+            ->method('hasResource')
+            ->with($resource)
+            ->willReturn(true);
+        $acl->expects(self::once())
+            ->method('isAllowed')
+            ->with($role, $resource)
+            ->willReturn(true);
+
+        /** @var Acl $acl */
+        $laminasAcl = new LaminasAcl($acl);
+
+        self::assertTrue($laminasAcl->isGranted($role, $resource));
     }
 
     /**

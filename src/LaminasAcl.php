@@ -44,6 +44,10 @@ final class LaminasAcl implements AuthorizationInterface
             return true;
         }
 
+        if (null !== $resource && !$this->acl->hasResource($resource)) {
+            return false;
+        }
+
         return $this->acl->isAllowed($role, $resource, $privilege);
     }
 }
