@@ -19,3 +19,5 @@ parameters:
   ignoreErrors:
     - '~Laminas\\Permissions\\Acl\\Exception\\InvalidArgumentException is never thrown in the corresponding try block~'
     - '~PHPDoc tag @throws with type .* is not subtype of Throwable~'
+    - '~Call to static method .* with .* will always evaluate to true~'
+    - '~Variable method call on~'
