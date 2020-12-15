@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization\Acl;
 
+use Laminas\Permissions\Acl\Acl;
 use Mezzio\GenericAuthorization\Acl\ConfigProvider;
 use Mezzio\GenericAuthorization\Acl\LaminasAcl;
 use PHPUnit\Framework\TestCase;
@@ -48,6 +49,7 @@ final class ConfigProviderTest extends TestCase
         $factories = $dependencies['factories'];
         self::assertIsArray($factories);
         self::assertArrayHasKey(LaminasAcl::class, $factories);
+        self::assertArrayHasKey(Acl::class, $factories);
     }
 
     /**
@@ -65,5 +67,6 @@ final class ConfigProviderTest extends TestCase
         $factories = $dependencies['factories'];
         self::assertIsArray($factories);
         self::assertArrayHasKey(LaminasAcl::class, $factories);
+        self::assertArrayHasKey(Acl::class, $factories);
     }
 }

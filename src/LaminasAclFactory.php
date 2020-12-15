@@ -79,13 +79,13 @@ final class LaminasAclFactory
     private function injectRoles(Acl $acl, array $roles): void
     {
         foreach ($roles as $role => $parents) {
-            foreach ($parents as $parent) {
-                if ($acl->hasRole($parent)) {
+            foreach ($parents as $parentRole) {
+                if ($acl->hasRole($parentRole)) {
                     continue;
                 }
 
                 try {
-                    $acl->addRole($parent);
+                    $acl->addRole($parentRole);
                 } catch (InvalidArgumentException $e) {
                     throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
                 }
