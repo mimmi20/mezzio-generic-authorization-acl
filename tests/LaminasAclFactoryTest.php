@@ -69,6 +69,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('Could not read mezzio-authorization-acl config');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -95,6 +96,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl roles configured for LaminasAcl');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -127,6 +129,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl resources configured for LaminasAcl');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -287,6 +290,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -341,6 +345,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -400,6 +405,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('Role \'editor\' not found');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -452,6 +458,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -507,6 +514,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('the resources must be defined as string or as an array if you want to define privileges');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -566,6 +574,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'1\' not found');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -685,6 +694,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'read\' not found');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
@@ -759,6 +769,79 @@ final class LaminasAclFactoryTest extends TestCase
 
     /**
      * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testFactoryWithPermissionsAndPrivileges3(): void
+    {
+        $config = [
+            'mezzio-authorization-acl' => [
+                'roles' => [
+                    'admini' => [],
+                    'editor' => ['administrator'],
+                    'contributor' => ['editor', 'administrator'],
+                ],
+                'resources' => [
+                    'admin.dashboard',
+                    'admin.posts',
+                ],
+                'allow' => [
+                    'editor' => ['admin.posts' => null],
+                    'administrator' => [
+                        'admin.dashboard' => null,
+                        'admin.posts' => ['read', 'admin'],
+                    ],
+                ],
+                'deny' => [
+                    'administrator' => [
+                        'admin.posts' => ['write', 'edit'],
+                    ],
+                ],
+            ],
+        ];
+
+        $acl = $this->getMockBuilder(Acl::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $acl->expects(self::exactly(3))
+            ->method('hasRole')
+            ->withConsecutive(['administrator'], ['editor'], ['administrator'])
+            ->willReturnOnConsecutiveCalls(false, true, true);
+        $acl->expects(self::exactly(4))
+            ->method('addRole')
+            ->withConsecutive(['admini'], ['administrator'], ['editor', ['administrator']], ['contributor', ['editor', 'administrator']]);
+        $acl->expects(self::exactly(2))
+            ->method('addResource')
+            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
+        $acl->expects(self::exactly(3))
+            ->method('allow')
+            ->withConsecutive(['editor', 'admin.posts', null], ['administrator', 'admin.dashboard', null], ['administrator', 'admin.posts', ['read', 'admin']]);
+        $acl->expects(self::once())
+            ->method('deny')
+            ->with('administrator', 'admin.posts', ['write', 'edit']);
+
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::exactly(2))
+            ->method('get')
+            ->withConsecutive(['config'], [Acl::class])
+            ->willReturnOnConsecutiveCalls($config, $acl);
+        $container->expects(self::never())
+            ->method('has');
+
+        $factory = new LaminasAclFactory();
+
+        /** @var ContainerInterface $container */
+        $laminasAcl = $factory($container);
+
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
      *
      * @return void
      */
@@ -809,6 +892,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'read\' not found');
+        $this->expectExceptionCode(0);
 
         /* @var ContainerInterface $container */
         $factory($container);
