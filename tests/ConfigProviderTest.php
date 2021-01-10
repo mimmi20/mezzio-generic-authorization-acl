@@ -14,6 +14,7 @@ namespace MezzioTest\GenericAuthorization\Acl;
 use Laminas\Permissions\Acl\Acl;
 use Mezzio\GenericAuthorization\Acl\ConfigProvider;
 use Mezzio\GenericAuthorization\Acl\LaminasAcl;
+use Mezzio\GenericAuthorization\AuthorizationInterface;
 use PHPUnit\Framework\TestCase;
 
 final class ConfigProviderTest extends TestCase
@@ -45,11 +46,16 @@ final class ConfigProviderTest extends TestCase
         $dependencies = $config['dependencies'];
         self::assertIsArray($dependencies);
         self::assertArrayHasKey('factories', $dependencies);
+        self::assertArrayHasKey('aliases', $dependencies);
 
         $factories = $dependencies['factories'];
         self::assertIsArray($factories);
         self::assertArrayHasKey(LaminasAcl::class, $factories);
         self::assertArrayHasKey(Acl::class, $factories);
+
+        $aliases = $dependencies['aliases'];
+        self::assertIsArray($aliases);
+        self::assertArrayHasKey(AuthorizationInterface::class, $aliases);
     }
 
     /**
@@ -63,10 +69,15 @@ final class ConfigProviderTest extends TestCase
         $dependencies = $this->provider->getDependencies();
         self::assertIsArray($dependencies);
         self::assertArrayHasKey('factories', $dependencies);
+        self::assertArrayHasKey('aliases', $dependencies);
 
         $factories = $dependencies['factories'];
         self::assertIsArray($factories);
         self::assertArrayHasKey(LaminasAcl::class, $factories);
         self::assertArrayHasKey(Acl::class, $factories);
+
+        $aliases = $dependencies['aliases'];
+        self::assertIsArray($aliases);
+        self::assertArrayHasKey(AuthorizationInterface::class, $aliases);
     }
 }
