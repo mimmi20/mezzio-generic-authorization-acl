@@ -13,6 +13,7 @@ namespace Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use Mezzio\GenericAuthorization\AuthorizationInterface;
 
 final class ConfigProvider
 {
@@ -32,6 +33,9 @@ final class ConfigProvider
     public function getDependencies(): array
     {
         return [
+            'aliases' => [
+                AuthorizationInterface::class => LaminasAcl::class,
+            ],
             'factories' => [
                 Acl::class => InvokableFactory::class,
                 LaminasAcl::class => LaminasAclFactory::class,
