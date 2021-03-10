@@ -1,9 +1,14 @@
 # mezzio-generic-authorization-acl
 
-[![Code Coverage](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl/branch/master/graph/badge.svg)](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl)
+[![Latest Stable Version](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/v/stable?format=flat-square)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
+[![Latest Unstable Version](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/v/unstable?format=flat-square)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
+[![License](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/license?format=flat-square)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
 
-[![Latest Stable Version](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/v/stable)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
-[![Total Downloads](https://poser.pugx.org/mimmi20/mezzio-generic-authorization-acl/downloads)](https://packagist.org/packages/mimmi20/mezzio-generic-authorization-acl)
+## Code Status
+
+[![codecov](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl/branch/master/graph/badge.svg)](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mimmi20/mezzio-generic-authorization-acl.svg)](http://isitmaintained.com/project/mimmi20/mezzio-generic-authorization-acl "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/mimmi20/mezzio-generic-authorization-acl.svg)](http://isitmaintained.com/project/mimmi20/mezzio-generic-authorization-acl "Percentage of issues still open")
 
 ## Installation
 
