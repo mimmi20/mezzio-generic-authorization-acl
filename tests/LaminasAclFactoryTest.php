@@ -9,6 +9,7 @@
  */
 
 declare(strict_types = 1);
+
 namespace MezzioTest\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
@@ -20,12 +21,12 @@ use Mezzio\GenericAuthorization\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
+use function assert;
+
 final class LaminasAclFactoryTest extends TestCase
 {
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithoutConfig(): void
     {
@@ -44,14 +45,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectException(Exception\InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl config provided');
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithConfigException(): void
     {
@@ -71,14 +70,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('Could not read mezzio-authorization-acl config');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithoutLaminasAclConfig(): void
     {
@@ -98,14 +95,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('No mezzio-authorization-acl roles configured for LaminasAcl');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithoutResources(): void
     {
@@ -131,15 +126,13 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('No mezzio-authorization-acl resources configured for LaminasAcl');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
      */
     public function testFactoryWithEmptyRolesResources(): void
     {
@@ -176,7 +169,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        /** @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $laminasAcl = $factory($container);
 
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
@@ -185,8 +178,6 @@ final class LaminasAclFactoryTest extends TestCase
     /**
      * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
      */
     public function testFactoryWithoutAllowOrDeny(): void
     {
@@ -236,7 +227,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        /** @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $laminasAcl = $factory($container);
 
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
@@ -244,8 +235,6 @@ final class LaminasAclFactoryTest extends TestCase
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithInvalidRole(): void
     {
@@ -290,14 +279,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithInvalidParentRole(): void
     {
@@ -345,14 +332,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithUnknownRole(): void
     {
@@ -405,14 +390,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('Role \'editor\' not found');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithInvalidResource(): void
     {
@@ -458,14 +441,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithInvalidPermissionsType(): void
     {
@@ -514,14 +495,12 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('the resources must be defined as string or as an array if you want to define privileges');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithInvalidPermissionsType2(): void
     {
@@ -574,15 +553,13 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('Resource \'1\' not found');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
      */
     public function testFactoryWithPermissionsAndPrivileges(): void
     {
@@ -633,7 +610,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        /** @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $laminasAcl = $factory($container);
 
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
@@ -641,8 +618,6 @@ final class LaminasAclFactoryTest extends TestCase
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithPermissionsException(): void
     {
@@ -693,15 +668,13 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('Resource \'read\' not found');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
     /**
      * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
      */
     public function testFactoryWithPermissionsAndPrivileges2(): void
     {
@@ -757,7 +730,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        /** @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $laminasAcl = $factory($container);
 
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
@@ -766,8 +739,6 @@ final class LaminasAclFactoryTest extends TestCase
     /**
      * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
      */
     public function testFactoryWithPermissionsAndPrivileges3(): void
     {
@@ -829,7 +800,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        /** @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $laminasAcl = $factory($container);
 
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
@@ -837,8 +808,6 @@ final class LaminasAclFactoryTest extends TestCase
 
     /**
      * @throws \PHPUnit\Framework\Exception
-     *
-     * @return void
      */
     public function testFactoryWithPermissionsAndPrivilegesException(): void
     {
@@ -889,7 +858,7 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionMessage('Resource \'read\' not found');
         $this->expectExceptionCode(0);
 
-        /* @var ContainerInterface $container */
+        assert($container instanceof ContainerInterface);
         $factory($container);
     }
 }
