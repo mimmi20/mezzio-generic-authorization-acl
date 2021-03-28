@@ -9,34 +9,35 @@
  */
 
 declare(strict_types = 1);
+
 namespace MezzioTest\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
 use Mezzio\GenericAuthorization\Acl\LaminasAcl;
+use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
+
+use function assert;
 
 final class LaminasAclTest extends TestCase
 {
     /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
+     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function testConstructor(): void
     {
         $acl = $this->createMock(Acl::class);
 
-        /** @var Acl $acl */
+        assert($acl instanceof Acl);
         $laminasAcl = new LaminasAcl($acl);
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
+     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function testIsNotGrantedWithUnknownResource(): void
     {
@@ -53,17 +54,15 @@ final class LaminasAclTest extends TestCase
         $acl->expects(self::never())
             ->method('isAllowed');
 
-        /** @var Acl $acl */
+        assert($acl instanceof Acl);
         $laminasAcl = new LaminasAcl($acl);
 
         self::assertFalse($laminasAcl->isGranted($role, $resource));
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
+     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function testIsGranted(): void
     {
@@ -82,17 +81,15 @@ final class LaminasAclTest extends TestCase
             ->with($role, $resource)
             ->willReturn(true);
 
-        /** @var Acl $acl */
+        assert($acl instanceof Acl);
         $laminasAcl = new LaminasAcl($acl);
 
         self::assertTrue($laminasAcl->isGranted($role, $resource));
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
+     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function testIsGrantedWithoutResourceAndPrivilege(): void
     {
@@ -104,7 +101,7 @@ final class LaminasAclTest extends TestCase
         $acl->expects(self::never())
             ->method('isAllowed');
 
-        /** @var Acl $acl */
+        assert($acl instanceof Acl);
         $laminasAcl = new LaminasAcl($acl);
 
         self::assertTrue($laminasAcl->isGranted($role));

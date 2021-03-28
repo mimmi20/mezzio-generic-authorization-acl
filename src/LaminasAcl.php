@@ -9,6 +9,7 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
@@ -17,12 +18,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class LaminasAcl implements AuthorizationInterface
 {
-    /** @var Acl */
-    private $acl;
+    private Acl $acl;
 
-    /**
-     * @param \Laminas\Permissions\Acl\Acl $acl
-     */
     public function __construct(Acl $acl)
     {
         $this->acl = $acl;
@@ -31,12 +28,7 @@ final class LaminasAcl implements AuthorizationInterface
     /**
      * Check if a role is granted for a resource
      *
-     * @param string|null                 $role
-     * @param string|null                 $resource
-     * @param string|null                 $privilege
-     * @param ServerRequestInterface|null $request
-     *
-     * @return bool
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
     public function isGranted(?string $role = null, ?string $resource = null, ?string $privilege = null, ?ServerRequestInterface $request = null): bool
     {

@@ -9,6 +9,7 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
@@ -18,15 +19,15 @@ use Mezzio\GenericAuthorization\Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
+use function is_array;
+use function is_numeric;
+use function is_string;
+
 final class LaminasAclFactory
 {
     /**
-     * @param \Psr\Container\ContainerInterface $container
-     *
      * @throws Exception\InvalidConfigException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     *
-     * @return \Mezzio\GenericAuthorization\AuthorizationInterface
+     * @throws ContainerExceptionInterface
      */
     public function __invoke(ContainerInterface $container): AuthorizationInterface
     {
@@ -69,12 +70,9 @@ final class LaminasAclFactory
     }
 
     /**
-     * @param Acl   $acl
-     * @param array $roles
+     * @param array<string, array<string>> $roles
      *
      * @throws Exception\InvalidConfigException
-     *
-     * @return void
      */
     private function injectRoles(Acl $acl, array $roles): void
     {
@@ -100,12 +98,9 @@ final class LaminasAclFactory
     }
 
     /**
-     * @param Acl   $acl
-     * @param array $resources
+     * @param array<string> $resources
      *
      * @throws Exception\InvalidConfigException
-     *
-     * @return void
      */
     private function injectResources(Acl $acl, array $resources): void
     {
@@ -119,13 +114,9 @@ final class LaminasAclFactory
     }
 
     /**
-     * @param Acl    $acl
-     * @param array  $permissions
-     * @param string $type
+     * @param array<string, array<int|string, string>|string> $permissions
      *
      * @throws Exception\InvalidConfigException
-     *
-     * @return void
      */
     private function injectPermissions(Acl $acl, array $permissions, string $type): void
     {

@@ -9,6 +9,7 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
@@ -18,7 +19,7 @@ use Mezzio\GenericAuthorization\AuthorizationInterface;
 final class ConfigProvider
 {
     /**
-     * @return array[]
+     * @return array<string, array<string, array<string, string>>>
      */
     public function __invoke(): array
     {
@@ -28,7 +29,7 @@ final class ConfigProvider
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function getDependencies(): array
     {
