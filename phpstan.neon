@@ -10,15 +10,18 @@ parameters:
     - %currentWorkingDirectory%/vendor/autoload.php
     - %currentWorkingDirectory%/vendor/squizlabs/php_codesniffer/autoload.php
     - %currentWorkingDirectory%/vendor/squizlabs/php_codesniffer/src/Util/Tokens.php
-  exceptionRules:
-    reportUnusedCatchesOfUncheckedExceptions: true
-    uncheckedExceptions: []
+  checkGenericClassInNonGenericObjectType: false
   checkMissingIterableValueType: false
   treatPhpDocTypesAsCertain: false
-  excludes_analyse:
-    - */tests/*/data/*
+  implicitThrows: false
+  exceptions:
+    checkedExceptionRegexes:
+      - '#Exception#'
+      - '#Throwable#'
+    check:
+      missingCheckedExceptionInThrows: true
+      tooWideThrowType: true
   ignoreErrors:
-    - '~Laminas\\Permissions\\Acl\\Exception\\InvalidArgumentException is never thrown in the corresponding try block~'
     - '~PHPDoc tag @throws with type .* is not subtype of Throwable~'
     - '~Call to static method .* with .* will always evaluate to true~'
     - '~Variable method call on~'
