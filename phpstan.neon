@@ -23,8 +23,3 @@ parameters:
       tooWideThrowType: true
   ignoreErrors:
     - '~PHPDoc tag @throws with type .* is not subtype of Throwable~'
-    - '~Call to static method .* with .* will always evaluate to true~'
-    - '~Variable method call on~'
-    - '~Call to function assert\(\) with true will always evaluate to true~'
-    - '~Instanceof between PHPUnit\\Framework\\MockObject\\MockObject&.* and .* will always evaluate to true~'
-    - '~Instanceof between .*&PHPUnit\\Framework\\MockObject\\MockObject and .* will always evaluate to true~'
