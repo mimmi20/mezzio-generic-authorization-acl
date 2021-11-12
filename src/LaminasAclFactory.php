@@ -19,6 +19,7 @@ use Mezzio\GenericAuthorization\Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
+use function assert;
 use function is_array;
 use function is_numeric;
 use function is_string;
@@ -32,7 +33,9 @@ final class LaminasAclFactory
     public function __invoke(ContainerInterface $container): AuthorizationInterface
     {
         try {
-            $config = $container->get('config')['mezzio-authorization-acl'] ?? null;
+            $config = $container->get('config');
+
+            assert(is_array($config));
         } catch (ContainerExceptionInterface $e) {
             throw new Exception\InvalidConfigException(
                 'Could not read mezzio-authorization-acl config',
@@ -40,6 +43,8 @@ final class LaminasAclFactory
                 $e
             );
         }
+
+        $config = $config['mezzio-authorization-acl'] ?? null;
 
         if (null === $config) {
             throw new Exception\InvalidConfigException(
@@ -60,6 +65,8 @@ final class LaminasAclFactory
         }
 
         $acl = $container->get(Acl::class);
+
+        assert($acl instanceof Acl);
 
         $this->injectRoles($acl, $config['roles']);
         $this->injectResources($acl, $config['resources']);
@@ -85,14 +92,14 @@ final class LaminasAclFactory
                 try {
                     $acl->addRole($parentRole);
                 } catch (InvalidArgumentException $e) {
-                    throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                    throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
                 }
             }
 
             try {
                 $acl->addRole($role, $parents);
             } catch (InvalidArgumentException $e) {
-                throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
             }
         }
     }
@@ -108,7 +115,7 @@ final class LaminasAclFactory
             try {
                 $acl->addResource($resource);
             } catch (InvalidArgumentException $e) {
-                throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
             }
         }
     }
@@ -125,7 +132,7 @@ final class LaminasAclFactory
                 try {
                     $acl->{$type}($role, $resources);
                 } catch (InvalidArgumentException $e) {
-                    throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                    throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
                 }
 
                 continue;
@@ -137,13 +144,13 @@ final class LaminasAclFactory
                         try {
                             $acl->{$type}($role, $privileges);
                         } catch (InvalidArgumentException $e) {
-                            throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                            throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
                         }
                     } else {
                         try {
                             $acl->{$type}($role, $resource, $privileges);
                         } catch (InvalidArgumentException $e) {
-                            throw new Exception\InvalidConfigException($e->getMessage(), $e->getCode(), $e);
+                            throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
                         }
                     }
                 }
