@@ -76,7 +76,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(\Rector\Php74\Rector\FuncCall\MbStrrposEncodingArgumentPositionRector::class);
     $services->set(\Rector\Php74\Rector\Double\RealToFloatTypeCastRector::class);
     $services->set(\Rector\Php74\Rector\Assign\NullCoalescingOperatorRector::class);
-    $services->set(\Rector\Php74\Rector\Function_\ReservedFnFunctionRector::class);
     $services->set(\Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class);
     $services->set(\Rector\Php74\Rector\FuncCall\ArraySpreadInsteadOfArrayMergeRector::class);
     $services->set(\Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class);
@@ -182,7 +181,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     // PRIVATIZATION
     $services->set(\Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector::class);
-    $services->set(\Rector\Privatization\Rector\ClassMethod\ChangeGlobalVariablesToPropertiesRector::class);
 
     $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_74);
 
