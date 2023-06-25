@@ -49,8 +49,8 @@ return static function (RectorConfig $rectorConfig): void {
     );
 
     $rectorConfig->skip([
-        ReadOnlyPropertyRector::class => [
-            __DIR__ . '/src/LaminasRbacFactory.php',
+        RemoveAlwaysTrueIfConditionRector::class => [
+            __DIR__ . '/src/LaminasAclFactory.php',
         ],
     ]);
 };
