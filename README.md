@@ -15,8 +15,8 @@
 You can install the mezzio-generic-authorization-acl library with
 [Composer](https://getcomposer.org):
 
-```bash
-$ composer require mimmi20/mezzio-generic-authorization-acl
+```shell
+composer require mimmi20/mezzio-generic-authorization-acl
 ```
 
 # Introduction

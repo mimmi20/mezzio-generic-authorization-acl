@@ -2,7 +2,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
  *
- * Copyright (c) 2020-2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,12 +10,12 @@
 
 declare(strict_types = 1);
 
-namespace Mezzio\GenericAuthorization\Acl;
+namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
 use Laminas\Permissions\Acl\Exception\InvalidArgumentException;
-use Mezzio\GenericAuthorization\AuthorizationInterface;
-use Mezzio\GenericAuthorization\Exception;
+use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
+use Mimmi20\Mezzio\GenericAuthorization\Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
@@ -40,27 +40,25 @@ final class LaminasAclFactory
             throw new Exception\InvalidConfigException(
                 'Could not read mezzio-authorization-acl config',
                 0,
-                $e
+                $e,
             );
         }
 
         $config = $config['mezzio-authorization-acl'] ?? null;
 
-        if (null === $config) {
-            throw new Exception\InvalidConfigException(
-                'No mezzio-authorization-acl config provided'
-            );
+        if ($config === null) {
+            throw new Exception\InvalidConfigException('No mezzio-authorization-acl config provided');
         }
 
         if (!isset($config['roles'])) {
             throw new Exception\InvalidConfigException(
-                'No mezzio-authorization-acl roles configured for LaminasAcl'
+                'No mezzio-authorization-acl roles configured for LaminasAcl',
             );
         }
 
         if (!isset($config['resources'])) {
             throw new Exception\InvalidConfigException(
-                'No mezzio-authorization-acl resources configured for LaminasAcl'
+                'No mezzio-authorization-acl resources configured for LaminasAcl',
             );
         }
 
@@ -159,7 +157,7 @@ final class LaminasAclFactory
             }
 
             throw new Exception\InvalidConfigException(
-                'the resources must be defined as string or as an array if you want to define privileges'
+                'the resources must be defined as string or as an array if you want to define privileges',
             );
         }
     }

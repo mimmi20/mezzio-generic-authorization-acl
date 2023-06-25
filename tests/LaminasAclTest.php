@@ -2,7 +2,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
  *
- * Copyright (c) 2020-2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,22 +10,17 @@
 
 declare(strict_types = 1);
 
-namespace MezzioTest\GenericAuthorization\Acl;
+namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
-use Mezzio\GenericAuthorization\Acl\LaminasAcl;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 use function assert;
 
 final class LaminasAclTest extends TestCase
 {
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testConstructor(): void
     {
         $acl = $this->createMock(Acl::class);
@@ -35,10 +30,7 @@ final class LaminasAclTest extends TestCase
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testIsNotGrantedWithUnknownResource(): void
     {
         $role     = 'foo';
@@ -60,10 +52,7 @@ final class LaminasAclTest extends TestCase
         self::assertFalse($laminasAcl->isGranted($role, $resource));
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testIsGranted(): void
     {
         $role     = 'foo';
@@ -87,10 +76,7 @@ final class LaminasAclTest extends TestCase
         self::assertTrue($laminasAcl->isGranted($role, $resource));
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testIsGrantedWithoutResourceAndPrivilege(): void
     {
         $role = 'foo';
