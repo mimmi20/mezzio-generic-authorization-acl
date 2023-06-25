@@ -2,7 +2,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
  *
- * Copyright (c) 2020-2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,24 +10,23 @@
 
 declare(strict_types = 1);
 
-namespace MezzioTest\GenericAuthorization\Acl;
+namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Exception\InvalidArgumentException;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Mezzio\GenericAuthorization\Acl\LaminasAcl;
-use Mezzio\GenericAuthorization\Acl\LaminasAclFactory;
-use Mezzio\GenericAuthorization\Exception;
+use Mimmi20\Mezzio\GenericAuthorization\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 use function assert;
 
-final class LaminasAclFactoryTest extends TestCase
+final class LaminasAclFactory1Test extends TestCase
 {
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithoutConfig(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -49,9 +48,7 @@ final class LaminasAclFactoryTest extends TestCase
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithConfigException(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -74,9 +71,7 @@ final class LaminasAclFactoryTest extends TestCase
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithoutLaminasAclConfig(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -99,9 +94,7 @@ final class LaminasAclFactoryTest extends TestCase
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithoutResources(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -115,7 +108,7 @@ final class LaminasAclFactoryTest extends TestCase
                     'mezzio-authorization-acl' => [
                         'roles' => [],
                     ],
-                ]
+                ],
             );
         $container->expects(self::never())
             ->method('has');
@@ -123,17 +116,16 @@ final class LaminasAclFactoryTest extends TestCase
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $this->expectExceptionMessage('No mezzio-authorization-acl resources configured for LaminasAcl');
+        $this->expectExceptionMessage(
+            'No mezzio-authorization-acl resources configured for LaminasAcl',
+        );
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithEmptyRolesResources(): void
     {
         $config = [
@@ -160,10 +152,22 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
@@ -175,10 +179,7 @@ final class LaminasAclFactoryTest extends TestCase
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithoutAllowOrDeny(): void
     {
         $config = [
@@ -197,19 +198,62 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
+        $acl     = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('hasRole')
-            ->withConsecutive(['administrator'], ['editor'])
-            ->willReturnOnConsecutiveCalls(false, true);
-        $acl->expects(self::exactly(4))
+            ->willReturnCallback(
+                static function (RoleInterface | string $role) use ($matcher): bool {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('administrator', $role),
+                        default => self::assertSame('editor', $role),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => false,
+                        default => true,
+                    };
+                },
+            );
+        $matcher = self::exactly(4);
+        $acl->expects($matcher)
             ->method('addRole')
-            ->withConsecutive(['admini'], ['administrator'], ['editor', ['administrator']], ['contributor', ['editor']]);
-        $acl->expects(self::exactly(4))
+            ->willReturnCallback(
+                static function (RoleInterface | string $role, array | RoleInterface | string | null $parents = null) use ($matcher): void {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admini', $role),
+                        2 => self::assertSame('administrator', $role),
+                        3 => self::assertSame('editor', $role),
+                        default => self::assertSame('contributor', $role),
+                    };
+
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame([], $parents),
+                        2 => self::assertNull($parents),
+                        3 => self::assertSame(['administrator'], $parents),
+                        default => self::assertSame(['editor'], $parents),
+                    };
+                },
+            );
+        $matcher = self::exactly(4);
+        $acl->expects($matcher)
             ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts'], ['admin.publish'], ['admin.settings']);
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resource),
+                        2 => self::assertSame('admin.posts', $resource),
+                        3 => self::assertSame('admin.publish', $resource),
+                        default => self::assertSame('admin.settings', $resource),
+                    };
+
+                    self::assertNull($parent);
+
+                    return $acl;
+                },
+            );
         $acl->expects(self::never())
             ->method('allow');
         $acl->expects(self::never())
@@ -218,10 +262,22 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
@@ -233,9 +289,7 @@ final class LaminasAclFactoryTest extends TestCase
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithInvalidRole(): void
     {
         $config = [
@@ -255,7 +309,11 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with(1, [])
-            ->willThrowException(new InvalidArgumentException('addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface'));
+            ->willThrowException(
+                new InvalidArgumentException(
+                    'addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface',
+                ),
+            );
         $acl->expects(self::never())
             ->method('addResource');
         $acl->expects(self::never())
@@ -266,26 +324,38 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface');
+        $this->expectExceptionMessage(
+            'addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface',
+        );
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithInvalidParentRole(): void
     {
         $config = [
@@ -308,7 +378,11 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator')
-            ->willThrowException(new InvalidArgumentException('addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface'));
+            ->willThrowException(
+                new InvalidArgumentException(
+                    'addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface',
+                ),
+            );
         $acl->expects(self::never())
             ->method('addResource');
         $acl->expects(self::never())
@@ -319,26 +393,38 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $this->expectExceptionMessage('addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface');
+        $this->expectExceptionMessage(
+            'addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface',
+        );
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithUnknownRole(): void
     {
         $config = [
@@ -364,9 +450,21 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
-        $acl->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resource),
+                        default => self::assertSame('admin.posts', $resource),
+                    };
+
+                    self::assertNull($parent);
+
+                    return $acl;
+                },
+            );
         $acl->expects(self::once())
             ->method('allow')
             ->with('editor', 'admin.dashboard')
@@ -377,10 +475,22 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
@@ -394,9 +504,7 @@ final class LaminasAclFactoryTest extends TestCase
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithInvalidResource(): void
     {
         $config = [
@@ -419,7 +527,11 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addResource')
             ->with(1)
-            ->willThrowException(new InvalidArgumentException('addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface'));
+            ->willThrowException(
+                new InvalidArgumentException(
+                    'addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface',
+                ),
+            );
         $acl->expects(self::never())
             ->method('allow');
         $acl->expects(self::never())
@@ -428,26 +540,38 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $this->expectExceptionMessage('addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface');
+        $this->expectExceptionMessage(
+            'addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface',
+        );
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithInvalidPermissionsType(): void
     {
         $config = [
@@ -471,9 +595,21 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
-        $acl->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resource),
+                        default => self::assertSame('admin.posts', $resource),
+                    };
+
+                    self::assertNull($parent);
+
+                    return $acl;
+                },
+            );
         $acl->expects(self::never())
             ->method('allow');
         $acl->expects(self::never())
@@ -482,26 +618,38 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
         $factory = new LaminasAclFactory();
 
         $this->expectException(Exception\InvalidConfigException::class);
-        $this->expectExceptionMessage('the resources must be defined as string or as an array if you want to define privileges');
+        $this->expectExceptionMessage(
+            'the resources must be defined as string or as an array if you want to define privileges',
+        );
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithInvalidPermissionsType2(): void
     {
         $config = [
@@ -527,9 +675,21 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
-        $acl->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resource),
+                        default => self::assertSame('admin.posts', $resource),
+                    };
+
+                    self::assertNull($parent);
+
+                    return $acl;
+                },
+            );
         $acl->expects(self::once())
             ->method('allow')
             ->with('administrator', 1)
@@ -540,10 +700,22 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
@@ -557,10 +729,7 @@ final class LaminasAclFactoryTest extends TestCase
         $factory($container);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithPermissionsAndPrivileges(): void
     {
         $config = [
@@ -589,22 +758,68 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
-        $acl->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
-        $acl->expects(self::exactly(2))
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resource),
+                        default => self::assertSame('admin.posts', $resource),
+                    };
+
+                    self::assertNull($parent);
+
+                    return $acl;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('allow')
-            ->withConsecutive(['administrator', 'admin.dashboard', null], ['administrator', 'admin.posts', ['read']]);
+            ->willReturnCallback(
+                static function (
+                    array | RoleInterface | string | null $roles = null,
+                    array | ResourceInterface | string | null $resources = null,
+                    array | string | null $privileges = null,
+                    AssertionInterface | null $assert = null,
+                ) use ($matcher): void {
+                    self::assertSame('administrator', $roles);
+
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resources),
+                        default => self::assertSame('admin.posts', $resources),
+                    };
+
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertNull($privileges),
+                        default => self::assertSame(['read'], $privileges),
+                    };
+
+                    self::assertNull($assert);
+                },
+            );
         $acl->expects(self::never())
             ->method('deny');
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
@@ -616,9 +831,7 @@ final class LaminasAclFactoryTest extends TestCase
         self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
+    /** @throws \PHPUnit\Framework\Exception */
     public function testFactoryWithPermissionsException(): void
     {
         $config = [
@@ -642,9 +855,21 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
-        $acl->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('admin.dashboard', $resource),
+                        default => self::assertSame('admin.posts', $resource),
+                    };
+
+                    self::assertNull($parent);
+
+                    return $acl;
+                },
+            );
         $acl->expects(self::once())
             ->method('allow')
             ->with('administrator', 'read', null, null)
@@ -655,200 +880,22 @@ final class LaminasAclFactoryTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(self::exactly(2))
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
             ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
-        $container->expects(self::never())
-            ->method('has');
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $config, $acl): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame('config', $id),
+                        default => self::assertSame(Acl::class, $id),
+                    };
 
-        $factory = new LaminasAclFactory();
-
-        $this->expectException(Exception\InvalidConfigException::class);
-        $this->expectExceptionMessage('Resource \'read\' not found');
-        $this->expectExceptionCode(0);
-
-        assert($container instanceof ContainerInterface);
-        $factory($container);
-    }
-
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
-    public function testFactoryWithPermissionsAndPrivileges2(): void
-    {
-        $config = [
-            'mezzio-authorization-acl' => [
-                'roles' => [
-                    'admini' => [],
-                    'editor' => ['administrator'],
-                    'contributor' => ['editor'],
-                ],
-                'resources' => [
-                    'admin.dashboard',
-                    'admin.posts',
-                ],
-                'allow' => [
-                    'editor' => 'admin.posts',
-                    'administrator' => [
-                        'admin.dashboard' => null,
-                        'admin.posts' => ['read'],
-                    ],
-                ],
-            ],
-        ];
-
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $acl->expects(self::exactly(2))
-            ->method('hasRole')
-            ->withConsecutive(['administrator'], ['editor'])
-            ->willReturnOnConsecutiveCalls(false, true);
-        $acl->expects(self::exactly(4))
-            ->method('addRole')
-            ->withConsecutive(['admini'], ['administrator'], ['editor', ['administrator']], ['contributor', ['editor']]);
-        $acl->expects(self::exactly(2))
-            ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
-        $acl->expects(self::exactly(3))
-            ->method('allow')
-            ->withConsecutive(['editor', 'admin.posts', null], ['administrator', 'admin.dashboard', null], ['administrator', 'admin.posts', ['read']]);
-        $acl->expects(self::never())
-            ->method('deny');
-
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $container->expects(self::exactly(2))
-            ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
-        $container->expects(self::never())
-            ->method('has');
-
-        $factory = new LaminasAclFactory();
-
-        assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
-
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
-    }
-
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
-    public function testFactoryWithPermissionsAndPrivileges3(): void
-    {
-        $config = [
-            'mezzio-authorization-acl' => [
-                'roles' => [
-                    'admini' => [],
-                    'editor' => ['administrator'],
-                    'contributor' => ['editor', 'administrator'],
-                ],
-                'resources' => [
-                    'admin.dashboard',
-                    'admin.posts',
-                ],
-                'allow' => [
-                    'editor' => ['admin.posts' => null],
-                    'administrator' => [
-                        'admin.dashboard' => null,
-                        'admin.posts' => ['read', 'admin'],
-                    ],
-                ],
-                'deny' => [
-                    'administrator' => [
-                        'admin.posts' => ['write', 'edit'],
-                    ],
-                ],
-            ],
-        ];
-
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $acl->expects(self::exactly(3))
-            ->method('hasRole')
-            ->withConsecutive(['administrator'], ['editor'], ['administrator'])
-            ->willReturnOnConsecutiveCalls(false, true, true);
-        $acl->expects(self::exactly(4))
-            ->method('addRole')
-            ->withConsecutive(['admini'], ['administrator'], ['editor', ['administrator']], ['contributor', ['editor', 'administrator']]);
-        $acl->expects(self::exactly(2))
-            ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
-        $acl->expects(self::exactly(3))
-            ->method('allow')
-            ->withConsecutive(['editor', 'admin.posts', null], ['administrator', 'admin.dashboard', null], ['administrator', 'admin.posts', ['read', 'admin']]);
-        $acl->expects(self::once())
-            ->method('deny')
-            ->with('administrator', 'admin.posts', ['write', 'edit']);
-
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $container->expects(self::exactly(2))
-            ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
-        $container->expects(self::never())
-            ->method('has');
-
-        $factory = new LaminasAclFactory();
-
-        assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
-
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
-    }
-
-    /**
-     * @throws \PHPUnit\Framework\Exception
-     */
-    public function testFactoryWithPermissionsAndPrivilegesException(): void
-    {
-        $config = [
-            'mezzio-authorization-acl' => [
-                'roles' => [
-                    'administrator' => [],
-                ],
-                'resources' => [
-                    'admin.dashboard',
-                    'admin.posts',
-                ],
-                'allow' => ['administrator' => ['admin.posts' => 'read']],
-            ],
-        ];
-
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
-        $acl->expects(self::once())
-            ->method('addRole')
-            ->with('administrator');
-        $acl->expects(self::exactly(2))
-            ->method('addResource')
-            ->withConsecutive(['admin.dashboard'], ['admin.posts']);
-        $acl->expects(self::once())
-            ->method('allow')
-            ->with('administrator', 'admin.posts', 'read', null)
-            ->willThrowException(new InvalidArgumentException('Resource \'read\' not found'));
-        $acl->expects(self::never())
-            ->method('deny');
-
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $container->expects(self::exactly(2))
-            ->method('get')
-            ->withConsecutive(['config'], [Acl::class])
-            ->willReturnOnConsecutiveCalls($config, $acl);
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $config,
+                        default => $acl,
+                    };
+                },
+            );
         $container->expects(self::never())
             ->method('has');
 
