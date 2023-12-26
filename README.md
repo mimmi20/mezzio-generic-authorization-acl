@@ -39,8 +39,8 @@ Through the specification and use of an ACL, an application may control how
 roles are granted access to resources. For instance, in a web application a
 *resource* can be a page, a portion of a view, a route, etc. A *role* can vary
 based on the context in which the request is made: it could be the client
-identity sent with an API request; whether the users is an _anonymous guest_ or a
-_registered user_ of the site; etc.
+identity sent with an API request; whether the users is an *anonymous guest* or a
+*registered user* of the site; etc.
 
 ## Configure an ACL system
 
@@ -123,7 +123,6 @@ logic for authorization, you will need to provide a custom implementation of
 > mezzio-authorization-acl uses [laminas-permissions-acl](https://github.com/laminas/laminas-permissions-acl)
 > to implement its ACL system. For more information, we suggest reading the
 > [laminas-acl documentation](https://docs.laminas.dev/laminas-permissions-acl/).
-
 
 ## License
 
