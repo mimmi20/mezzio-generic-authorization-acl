@@ -19,7 +19,7 @@ You can install the mezzio-generic-authorization-acl library with
 composer require mimmi20/mezzio-generic-authorization-acl
 ```
 
-# Introduction
+## Introduction
 
 This component provides [Access Control List](https://en.wikipedia.org/wiki/Access_control_list)
 (ACL) authorization abstraction for the [mezzio-generic-authorization](https://github.com/mimmi20/mezzio-generic-authorization)
