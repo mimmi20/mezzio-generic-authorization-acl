@@ -19,6 +19,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Laminas\Permissions\Acl\Role\RoleInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\InvalidConfigException;
+use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -28,7 +29,7 @@ use function assert;
 final class LaminasAclFactoryTest extends TestCase
 {
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -54,7 +55,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -81,7 +82,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -108,7 +109,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -143,7 +144,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -201,7 +202,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -315,7 +316,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -385,7 +386,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -458,7 +459,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -542,7 +543,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -613,7 +614,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -695,7 +696,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -779,7 +780,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -885,7 +886,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -967,7 +968,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -1110,7 +1111,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -1259,7 +1260,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
