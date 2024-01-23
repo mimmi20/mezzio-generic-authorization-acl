@@ -18,8 +18,8 @@ use Laminas\Permissions\Acl\Exception\InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Laminas\Permissions\Acl\Role\RoleInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Mimmi20\Mezzio\GenericAuthorization\Exception;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\InvalidConfigException;
+use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -29,7 +29,7 @@ use function assert;
 final class LaminasAclFactoryTest extends TestCase
 {
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -47,7 +47,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl config provided');
 
         assert($container instanceof ContainerInterface);
@@ -55,7 +55,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -73,7 +73,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Could not read mezzio-authorization-acl config');
         $this->expectExceptionCode(0);
 
@@ -82,7 +82,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -100,7 +100,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl roles configured for LaminasAcl');
         $this->expectExceptionCode(0);
 
@@ -109,7 +109,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -133,7 +133,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'No mezzio-authorization-acl resources configured for LaminasAcl',
         );
@@ -144,7 +144,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -202,7 +202,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -316,7 +316,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -375,7 +375,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface',
         );
@@ -386,7 +386,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -448,7 +448,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface',
         );
@@ -459,7 +459,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -534,7 +534,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Role \'editor\' not found');
         $this->expectExceptionCode(0);
 
@@ -543,7 +543,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -603,7 +603,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'addResource() expects $resource to be of type Laminas\Permissions\Acl\Resource\ResourceInterface',
         );
@@ -614,7 +614,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -685,7 +685,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'the resources must be defined as string or as an array if you want to define privileges',
         );
@@ -696,7 +696,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -771,7 +771,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'1\' not found');
         $this->expectExceptionCode(0);
 
@@ -780,7 +780,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -886,7 +886,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -959,7 +959,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'read\' not found');
         $this->expectExceptionCode(0);
 
@@ -968,7 +968,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -1111,7 +1111,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -1260,7 +1260,7 @@ final class LaminasAclFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws ContainerExceptionInterface
      * @throws InvalidConfigException
      */
@@ -1333,7 +1333,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $factory = new LaminasAclFactory();
 
-        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'read\' not found');
         $this->expectExceptionCode(0);
 
