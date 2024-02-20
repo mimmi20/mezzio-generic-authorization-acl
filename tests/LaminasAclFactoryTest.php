@@ -377,7 +377,7 @@ final class LaminasAclFactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'addRole() expects $role to be of type Laminas\\Permissions\\Acl\\Role\\RoleInterface',
+            'addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface',
         );
         $this->expectExceptionCode(0);
 
