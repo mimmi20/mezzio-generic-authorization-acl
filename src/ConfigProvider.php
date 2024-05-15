@@ -34,6 +34,8 @@ final class ConfigProvider
      * @return array<string, array<string, string>>
      *
      * @throws void
+     *
+     * @api
      */
     public function getDependencies(): array
     {
