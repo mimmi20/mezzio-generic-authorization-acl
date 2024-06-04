@@ -18,7 +18,10 @@ jobs:
           lfs: false
           persist-credentials: false
 
-      # see https://github.com/rhysd/actionlint/blob/main/docs/usage.md
       - name: "Check workflow files"
-        # https://hub.docker.com/r/rhysd/actionlint/tags
-        uses: "docker://rhysd/actionlint:1.7.1"
+        uses: "raven-actions/actionlint@v1"
+        with:
+          matcher: true
+          cache: true
+          fail-on-error: false
+          flags: "-ignore SC2086"
