@@ -1,0 +1,24 @@
+name: "Lint GitHub Actions workflows"
+
+on:
+  pull_request:
+    paths:
+      - ".github/**"
+
+jobs:
+  actionlint:
+    runs-on: "ubuntu-22.04"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+          lfs: false
+          persist-credentials: false
+
+      # see https://github.com/rhysd/actionlint/blob/main/docs/usage.md
+      - name: "Check workflow files"
+        # https://hub.docker.com/r/rhysd/actionlint/tags
+        uses: "docker://rhysd/actionlint:1.7.1"
