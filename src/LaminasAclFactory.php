@@ -144,12 +144,14 @@ final class LaminasAclFactory
                         } catch (InvalidArgumentException $e) {
                             throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
                         }
-                    } else {
-                        try {
-                            $acl->{$type}($role, $resource, $privileges);
-                        } catch (InvalidArgumentException $e) {
-                            throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
-                        }
+
+                        continue;
+                    }
+
+                    try {
+                        $acl->{$type}($role, $resource, $privileges);
+                    } catch (InvalidArgumentException $e) {
+                        throw new Exception\InvalidConfigException($e->getMessage(), 0, $e);
                     }
                 }
 
