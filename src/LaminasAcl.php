@@ -15,12 +15,13 @@ namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
 use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class LaminasAcl implements AuthorizationInterface
+final readonly class LaminasAcl implements AuthorizationInterface
 {
     /** @throws void */
-    public function __construct(private readonly Acl $acl)
+    public function __construct(private Acl $acl)
     {
         // nothing to do
     }
@@ -32,6 +33,7 @@ final class LaminasAcl implements AuthorizationInterface
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
+    #[Override]
     public function isGranted(
         string | null $role = null,
         string | null $resource = null,
