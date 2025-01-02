@@ -3,7 +3,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
  *
- * Copyright (c) 2020-2024, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -47,17 +47,17 @@ final class LaminasAclFactory
 
         $config = $config['mezzio-authorization-acl'] ?? null;
 
-        if ($config === null) {
+        if (!is_array($config)) {
             throw new Exception\InvalidConfigException('No mezzio-authorization-acl config provided');
         }
 
-        if (!isset($config['roles'])) {
+        if (!isset($config['roles']) || !is_array($config['roles'])) {
             throw new Exception\InvalidConfigException(
                 'No mezzio-authorization-acl roles configured for LaminasAcl',
             );
         }
 
-        if (!isset($config['resources'])) {
+        if (!isset($config['resources']) || !is_array($config['resources'])) {
             throw new Exception\InvalidConfigException(
                 'No mezzio-authorization-acl resources configured for LaminasAcl',
             );
