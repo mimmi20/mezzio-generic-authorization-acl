@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
+use PHPUnit\Event\NoPreviousThrowableException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +22,11 @@ use function assert;
 
 final class LaminasAclTest extends TestCase
 {
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
     public function testConstructor(): void
     {
         $acl = $this->createMock(Acl::class);
