@@ -166,6 +166,8 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('addRole');
         $acl->expects(self::never())
+            ->method('hasResource');
+        $acl->expects(self::never())
             ->method('addResource');
         $acl->expects(self::never())
             ->method('allow');
@@ -180,12 +182,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -228,19 +232,23 @@ final class LaminasAclFactoryTest extends TestCase
         $acl     = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $matcher = self::exactly(2);
+        $matcher = self::exactly(5);
         $acl->expects($matcher)
             ->method('hasRole')
             ->willReturnCallback(
                 static function (RoleInterface | string $role) use ($matcher): bool {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('administrator', $role),
-                        default => self::assertSame('editor', $role),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admini', $role, (string) $invocation),
+                        2 => self::assertSame('administrator', $role, (string) $invocation),
+                        3, 4 => self::assertSame('editor', $role, (string) $invocation),
+                        default => self::assertSame('contributor', $role, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
-                        1 => false,
-                        default => true,
+                    return match ($invocation) {
+                        4 => true,
+                        default => false,
                     };
                 },
             );
@@ -249,19 +257,38 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('addRole')
             ->willReturnCallback(
                 static function (RoleInterface | string $role, array | RoleInterface | string | null $parents = null) use ($matcher): void {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admini', $role),
-                        2 => self::assertSame('administrator', $role),
-                        3 => self::assertSame('editor', $role),
-                        default => self::assertSame('contributor', $role),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admini', $role, (string) $invocation),
+                        2 => self::assertSame('administrator', $role, (string) $invocation),
+                        3 => self::assertSame('editor', $role, (string) $invocation),
+                        default => self::assertSame('contributor', $role, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame([], $parents),
-                        2 => self::assertNull($parents),
-                        3 => self::assertSame(['administrator'], $parents),
-                        default => self::assertSame(['editor'], $parents),
+                    match ($invocation) {
+                        1 => self::assertSame([], $parents, (string) $invocation),
+                        2 => self::assertNull($parents, (string) $invocation),
+                        3 => self::assertSame(['administrator'], $parents, (string) $invocation),
+                        default => self::assertSame(['editor'], $parents, (string) $invocation),
                     };
+                },
+            );
+        $matcher = self::exactly(4);
+        $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        2 => self::assertSame('admin.posts', $resource, (string) $invocation),
+                        3 => self::assertSame('admin.publish', $resource, (string) $invocation),
+                        default => self::assertSame('admin.settings', $resource, (string) $invocation),
+                    };
+
+                    return false;
                 },
             );
         $matcher = self::exactly(4);
@@ -269,14 +296,16 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        2 => self::assertSame('admin.posts', $resource),
-                        3 => self::assertSame('admin.publish', $resource),
-                        default => self::assertSame('admin.settings', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        2 => self::assertSame('admin.posts', $resource, (string) $invocation),
+                        3 => self::assertSame('admin.publish', $resource, (string) $invocation),
+                        default => self::assertSame('admin.settings', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -294,12 +323,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -335,8 +366,10 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with(1)
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with(1, [])
@@ -345,6 +378,8 @@ final class LaminasAclFactoryTest extends TestCase
                     'addRole() expects $role to be of type Laminas\Permissions\Acl\Role\RoleInterface',
                 ),
             );
+        $acl->expects(self::never())
+            ->method('hasResource');
         $acl->expects(self::never())
             ->method('addResource');
         $acl->expects(self::never())
@@ -360,12 +395,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -419,6 +456,8 @@ final class LaminasAclFactoryTest extends TestCase
                 ),
             );
         $acl->expects(self::never())
+            ->method('hasResource');
+        $acl->expects(self::never())
             ->method('addResource');
         $acl->expects(self::never())
             ->method('allow');
@@ -433,12 +472,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -484,22 +525,41 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $matcher = self::exactly(2);
         $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -519,12 +579,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -562,11 +624,17 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
+        $acl->expects(self::once())
+            ->method('hasResource')
+            ->with(1)
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addResource')
             ->with(1)
@@ -588,12 +656,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -637,22 +707,41 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $matcher = self::exactly(2);
         $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -670,12 +759,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -721,22 +812,41 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $matcher = self::exactly(2);
         $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -756,12 +866,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -808,22 +920,41 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $matcher = self::exactly(2);
         $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -838,19 +969,21 @@ final class LaminasAclFactoryTest extends TestCase
                     array | string | null $privileges = null,
                     AssertionInterface | null $assert = null,
                 ) use ($matcher): void {
-                    self::assertSame('administrator', $roles);
+                    $invocation = $matcher->numberOfInvocations();
 
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resources),
-                        default => self::assertSame('admin.posts', $resources),
+                    self::assertSame('administrator', $roles, (string) $invocation);
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resources, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resources, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertNull($privileges),
-                        default => self::assertSame(['read'], $privileges),
+                    match ($invocation) {
+                        1 => self::assertNull($privileges, (string) $invocation),
+                        default => self::assertSame(['read'], $privileges, (string) $invocation),
                     };
 
-                    self::assertNull($assert);
+                    self::assertNull($assert, (string) $invocation);
                 },
             );
         $acl->expects(self::never())
@@ -864,12 +997,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -909,22 +1044,41 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $matcher = self::exactly(2);
         $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -944,12 +1098,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -999,19 +1155,23 @@ final class LaminasAclFactoryTest extends TestCase
         $acl     = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $matcher = self::exactly(2);
+        $matcher = self::exactly(5);
         $acl->expects($matcher)
             ->method('hasRole')
             ->willReturnCallback(
                 static function (RoleInterface | string $role) use ($matcher): bool {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('administrator', $role),
-                        default => self::assertSame('editor', $role),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admini', $role, (string) $invocation),
+                        2 => self::assertSame('administrator', $role, (string) $invocation),
+                        3, 4 => self::assertSame('editor', $role, (string) $invocation),
+                        default => self::assertSame('contributor', $role, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
-                        1 => false,
-                        default => true,
+                    return match ($invocation) {
+                        4 => true,
+                        default => false,
                     };
                 },
             );
@@ -1020,19 +1180,36 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('addRole')
             ->willReturnCallback(
                 static function (RoleInterface | string $role, array | RoleInterface | string | null $parents = null) use ($matcher): void {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admini', $role),
-                        2 => self::assertSame('administrator', $role),
-                        3 => self::assertSame('editor', $role),
-                        default => self::assertSame('contributor', $role),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admini', $role, (string) $invocation),
+                        2 => self::assertSame('administrator', $role, (string) $invocation),
+                        3 => self::assertSame('editor', $role, (string) $invocation),
+                        default => self::assertSame('contributor', $role, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame([], $parents),
-                        2 => self::assertNull($parents),
-                        3 => self::assertSame(['administrator'], $parents),
-                        default => self::assertSame(['editor'], $parents),
+                    match ($invocation) {
+                        1 => self::assertSame([], $parents, (string) $invocation),
+                        2 => self::assertNull($parents, (string) $invocation),
+                        3 => self::assertSame(['administrator'], $parents, (string) $invocation),
+                        default => self::assertSame(['editor'], $parents, (string) $invocation),
                     };
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
                 },
             );
         $matcher = self::exactly(2);
@@ -1040,12 +1217,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -1060,22 +1239,24 @@ final class LaminasAclFactoryTest extends TestCase
                     array | string | null $privileges = null,
                     AssertionInterface | null $assert = null,
                 ) use ($matcher): void {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('editor', $roles),
-                        default => self::assertSame('administrator', $roles),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('editor', $roles, (string) $invocation),
+                        default => self::assertSame('administrator', $roles, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        2 => self::assertSame('admin.dashboard', $resources),
-                        default => self::assertSame('admin.posts', $resources),
+                    match ($invocation) {
+                        2 => self::assertSame('admin.dashboard', $resources, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resources, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        3 => self::assertSame(['read'], $privileges),
-                        default => self::assertNull($privileges),
+                    match ($invocation) {
+                        3 => self::assertSame(['read'], $privileges, (string) $invocation),
+                        default => self::assertNull($privileges, (string) $invocation),
                     };
 
-                    self::assertNull($assert);
+                    self::assertNull($assert, (string) $invocation);
                 },
             );
         $acl->expects(self::never())
@@ -1089,12 +1270,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -1147,19 +1330,23 @@ final class LaminasAclFactoryTest extends TestCase
         $acl     = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $matcher = self::exactly(3);
+        $matcher = self::exactly(6);
         $acl->expects($matcher)
             ->method('hasRole')
             ->willReturnCallback(
                 static function (RoleInterface | string $role) use ($matcher): bool {
-                    match ($matcher->numberOfInvocations()) {
-                        2 => self::assertSame('editor', $role),
-                        default => self::assertSame('administrator', $role),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admini', $role, (string) $invocation),
+                        2, 5 => self::assertSame('administrator', $role, (string) $invocation),
+                        3, 4 => self::assertSame('editor', $role, (string) $invocation),
+                        default => self::assertSame('contributor', $role, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
-                        1 => false,
-                        default => true,
+                    return match ($invocation) {
+                        4, 5 => true,
+                        default => false,
                     };
                 },
             );
@@ -1168,19 +1355,40 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('addRole')
             ->willReturnCallback(
                 static function (RoleInterface | string $role, array | RoleInterface | string | null $parents = null) use ($matcher): void {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admini', $role),
-                        2 => self::assertSame('administrator', $role),
-                        3 => self::assertSame('editor', $role),
-                        default => self::assertSame('contributor', $role),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admini', $role, (string) $invocation),
+                        2 => self::assertSame('administrator', $role, (string) $invocation),
+                        3 => self::assertSame('editor', $role, (string) $invocation),
+                        default => self::assertSame('contributor', $role, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame([], $parents),
-                        2 => self::assertNull($parents),
-                        3 => self::assertSame(['administrator'], $parents),
-                        default => self::assertSame(['editor', 'administrator'], $parents),
+                    match ($invocation) {
+                        1 => self::assertSame([], $parents, (string) $invocation),
+                        2 => self::assertNull($parents, (string) $invocation),
+                        3 => self::assertSame(['administrator'], $parents, (string) $invocation),
+                        default => self::assertSame(
+                            ['editor', 'administrator'],
+                            $parents,
+                            (string) $invocation,
+                        ),
                     };
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
                 },
             );
         $matcher = self::exactly(2);
@@ -1188,12 +1396,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -1208,22 +1418,24 @@ final class LaminasAclFactoryTest extends TestCase
                     array | string | null $privileges = null,
                     AssertionInterface | null $assert = null,
                 ) use ($matcher): void {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('editor', $roles),
-                        default => self::assertSame('administrator', $roles),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('editor', $roles, (string) $invocation),
+                        default => self::assertSame('administrator', $roles, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        2 => self::assertSame('admin.dashboard', $resources),
-                        default => self::assertSame('admin.posts', $resources),
+                    match ($invocation) {
+                        2 => self::assertSame('admin.dashboard', $resources, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resources, (string) $invocation),
                     };
 
-                    match ($matcher->numberOfInvocations()) {
-                        3 => self::assertSame(['read', 'admin'], $privileges),
-                        default => self::assertNull($privileges),
+                    match ($invocation) {
+                        3 => self::assertSame(['read', 'admin'], $privileges, (string) $invocation),
+                        default => self::assertNull($privileges, (string) $invocation),
                     };
 
-                    self::assertNull($assert);
+                    self::assertNull($assert, (string) $invocation);
                 },
             );
         $acl->expects(self::once())
@@ -1238,12 +1450,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
@@ -1283,22 +1497,41 @@ final class LaminasAclFactoryTest extends TestCase
         $acl = $this->getMockBuilder(Acl::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $acl->expects(self::never())
-            ->method('hasRole');
+        $acl->expects(self::once())
+            ->method('hasRole')
+            ->with('administrator')
+            ->willReturn(false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $matcher = self::exactly(2);
         $acl->expects($matcher)
+            ->method('hasResource')
+            ->willReturnCallback(
+                static function (ResourceInterface | string $resource) use ($matcher): bool {
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
+                    };
+
+                    return false;
+                },
+            );
+        $matcher = self::exactly(2);
+        $acl->expects($matcher)
             ->method('addResource')
             ->willReturnCallback(
                 static function (ResourceInterface | string $resource, ResourceInterface | string | null $parent = null) use ($matcher, $acl): Acl {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('admin.dashboard', $resource),
-                        default => self::assertSame('admin.posts', $resource),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('admin.dashboard', $resource, (string) $invocation),
+                        default => self::assertSame('admin.posts', $resource, (string) $invocation),
                     };
 
-                    self::assertNull($parent);
+                    self::assertNull($parent, (string) $invocation);
 
                     return $acl;
                 },
@@ -1318,12 +1551,14 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $config, $acl): mixed {
-                    match ($matcher->numberOfInvocations()) {
-                        1 => self::assertSame('config', $id),
-                        default => self::assertSame(Acl::class, $id),
+                    $invocation = $matcher->numberOfInvocations();
+
+                    match ($invocation) {
+                        1 => self::assertSame('config', $id, (string) $invocation),
+                        default => self::assertSame(Acl::class, $id, (string) $invocation),
                     };
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invocation) {
                         1 => $config,
                         default => $acl,
                     };
