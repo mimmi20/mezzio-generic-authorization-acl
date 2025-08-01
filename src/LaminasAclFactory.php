@@ -95,6 +95,10 @@ final class LaminasAclFactory
                 }
             }
 
+            if ($acl->hasRole($role)) {
+                continue;
+            }
+
             try {
                 $acl->addRole($role, $parents);
             } catch (InvalidArgumentException $e) {
@@ -111,6 +115,10 @@ final class LaminasAclFactory
     private function injectResources(Acl $acl, array $resources): void
     {
         foreach ($resources as $resource) {
+            if ($acl->hasResource($resource)) {
+                continue;
+            }
+
             try {
                 $acl->addResource($resource);
             } catch (InvalidArgumentException $e) {
