@@ -7,11 +7,9 @@
 ## Code Status
 
 [![codecov](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl/branch/master/graph/badge.svg)](https://codecov.io/gh/mimmi20/mezzio-generic-authorization-acl)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/06779aea2b0c62780fe3/test_coverage)](https://codeclimate.com/github/mimmi20/mezzio-generic-authorization-acl/test_coverage)
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/mimmi20/mezzio-generic-authorization-acl.svg)](https://isitmaintained.com/project/mimmi20/mezzio-generic-authorization-acl "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/mimmi20/mezzio-generic-authorization-acl.svg)](https://isitmaintained.com/project/mimmi20/mezzio-generic-authorization-acl "Percentage of issues still open")
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fmimmi20%2Fmezzio-generic-authorization-acl%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/mimmi20/mezzio-generic-authorization-acl/master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/06779aea2b0c62780fe3/maintainability)](https://codeclimate.com/github/mimmi20/mezzio-generic-authorization-acl/maintainability)
 
 ## Installation
 
