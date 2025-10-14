@@ -113,6 +113,7 @@ updates:
       - dependency-name: "psr/container"
       - dependency-name: "psr/http-message"
       - dependency-name: "mimmi20/mezzio-generic-authorization"
+        versions: [ ">=5.0.0" ]
 
     rebase-strategy: "disabled"
 
