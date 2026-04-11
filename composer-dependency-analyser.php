@@ -3,7 +3,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
  *
- * Copyright (c) 2020-2025, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2026, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -37,6 +37,10 @@ $config
     ->ignoreErrorsOnPackage('mimmi20/coding-standard', [ErrorType::UNUSED_DEPENDENCY])
     ->ignoreErrorsOnPackage('phpstan/extension-installer', [ErrorType::UNUSED_DEPENDENCY])
     ->ignoreErrorsOnPackage('phpstan/phpstan-deprecation-rules', [ErrorType::UNUSED_DEPENDENCY])
+    ->ignoreErrorsOnPackage(
+        'jbelien/phpstan-sarif-formatter',
+        [ErrorType::UNUSED_DEPENDENCY],
+    )
 
     // Adjust analysis
     // dev packages are often used only in CI, so this is not enabled by default
