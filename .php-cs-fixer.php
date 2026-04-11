@@ -3,7 +3,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization-acl package.
  *
- * Copyright (c) 2020-2025, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2026, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -54,4 +54,5 @@ return $config
         ),
     )
     ->setUsingCache(false)
-    ->setFinder($finder);
+    ->setFinder($finder)
+    ->setUnsupportedPhpVersionAllowed(true);
