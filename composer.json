@@ -85,12 +85,12 @@
     "sort-packages": true
   },
   "extra": {
-    "laminas": {
-      "config-provider": "Mimmi20\\Mezzio\\GenericAuthorization\\Acl\\ConfigProvider"
-    },
     "composer-normalize": {
       "indent-size": 2,
       "indent-style": "space"
+    },
+    "laminas": {
+      "config-provider": "Mimmi20\\Mezzio\\GenericAuthorization\\Acl\\ConfigProvider"
     }
   }
 }
