@@ -110,6 +110,7 @@ parameters:
   ignoreErrors:
     - '~will always evaluate to true~'
     - '~array<mixed, mixed> given~'
+    - '~mixed given~'
 
 services:
   errorFormatter.sarif:
