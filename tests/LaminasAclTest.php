@@ -29,7 +29,7 @@ final class LaminasAclTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $acl = $this->createMock(Acl::class);
+        $acl = $this->createStub(Acl::class);
 
         assert($acl instanceof Acl);
         $laminasAcl = new LaminasAcl($acl);
