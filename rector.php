@@ -15,6 +15,7 @@ use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\If_\RemoveAlwaysTrueIfConditionRector;
 use Rector\DeadCode\Rector\If_\RemoveDeadInstanceOfRector;
 use Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector;
+use Rector\DeadCode\Rector\StmtsAwareInterface\RemoveDeadInstanceOfAssertRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
@@ -36,6 +37,7 @@ return static function (RectorConfig $rectorConfig): void {
             RemoveDeadInstanceOfRector::class,
             RemoveAlwaysTrueIfConditionRector::class,
             RemoveParentCallWithoutParentRector::class,
+            RemoveDeadInstanceOfAssertRector::class,
         ],
     );
 
