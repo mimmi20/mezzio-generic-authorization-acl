@@ -111,6 +111,8 @@ parameters:
     - '~will always evaluate to true~'
     - '~array<mixed, mixed> given~'
     - '~mixed given~'
+    -
+      identifier: argument.named
 
 services:
   errorFormatter.sarif:

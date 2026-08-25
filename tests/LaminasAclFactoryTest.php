@@ -36,9 +36,7 @@ final class LaminasAclFactoryTest extends TestCase
      */
     public function testFactoryWithoutConfig(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('get')
             ->with('config')
@@ -46,13 +44,13 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl config provided');
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -62,9 +60,7 @@ final class LaminasAclFactoryTest extends TestCase
      */
     public function testFactoryWithConfigException(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('get')
             ->with('config')
@@ -72,14 +68,14 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Could not read mezzio-authorization-acl config');
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -89,9 +85,7 @@ final class LaminasAclFactoryTest extends TestCase
      */
     public function testFactoryWithoutLaminasAclConfig(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('get')
             ->with('config')
@@ -99,14 +93,14 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('No mezzio-authorization-acl roles configured for LaminasAcl');
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -116,9 +110,7 @@ final class LaminasAclFactoryTest extends TestCase
      */
     public function testFactoryWithoutResources(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('get')
             ->with('config')
@@ -132,7 +124,7 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
@@ -141,7 +133,7 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -158,9 +150,7 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::never())
             ->method('hasRole');
         $acl->expects(self::never())
@@ -174,15 +164,13 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $matcher   = self::exactly(2);
-        $container->expects($matcher)
+        $container    = $this->createMock(ContainerInterface::class);
+        $invokedCount = self::exactly(2);
+        $container->expects($invokedCount)
             ->method('get')
             ->willReturnCallback(
-                static function (string $id) use ($matcher, $config, $acl): mixed {
-                    $invocation = $matcher->numberOfInvocations();
+                static function (string $id) use ($invokedCount, $config, $acl): mixed {
+                    $invocation = $invokedCount->numberOfInvocations();
 
                     match ($invocation) {
                         1 => self::assertSame('config', $id, (string) $invocation),
@@ -198,12 +186,12 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
+        $authorization = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $authorization);
     }
 
     /**
@@ -229,9 +217,7 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl     = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl     = $this->createMock(Acl::class);
         $matcher = self::exactly(5);
         $acl->expects($matcher)
             ->method('hasRole')
@@ -315,9 +301,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -339,12 +323,12 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
+        $authorization = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $authorization);
     }
 
     /**
@@ -363,13 +347,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with(1)
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with(1, [])
@@ -387,15 +369,13 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $matcher   = self::exactly(2);
-        $container->expects($matcher)
+        $container    = $this->createMock(ContainerInterface::class);
+        $invokedCount = self::exactly(2);
+        $container->expects($invokedCount)
             ->method('get')
             ->willReturnCallback(
-                static function (string $id) use ($matcher, $config, $acl): mixed {
-                    $invocation = $matcher->numberOfInvocations();
+                static function (string $id) use ($invokedCount, $config, $acl): mixed {
+                    $invocation = $invokedCount->numberOfInvocations();
 
                     match ($invocation) {
                         1 => self::assertSame('config', $id, (string) $invocation),
@@ -411,7 +391,7 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
@@ -420,7 +400,7 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -440,13 +420,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator')
@@ -464,15 +442,13 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $matcher   = self::exactly(2);
-        $container->expects($matcher)
+        $container    = $this->createMock(ContainerInterface::class);
+        $invokedCount = self::exactly(2);
+        $container->expects($invokedCount)
             ->method('get')
             ->willReturnCallback(
-                static function (string $id) use ($matcher, $config, $acl): mixed {
-                    $invocation = $matcher->numberOfInvocations();
+                static function (string $id) use ($invokedCount, $config, $acl): mixed {
+                    $invocation = $invokedCount->numberOfInvocations();
 
                     match ($invocation) {
                         1 => self::assertSame('config', $id, (string) $invocation),
@@ -488,7 +464,7 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
@@ -497,7 +473,7 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -522,13 +498,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
@@ -571,9 +545,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -595,14 +567,14 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Role \'editor\' not found');
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -621,20 +593,18 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
         $acl->expects(self::once())
             ->method('hasResource')
             ->with(1)
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addResource')
             ->with(1)
@@ -648,15 +618,13 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $matcher   = self::exactly(2);
-        $container->expects($matcher)
+        $container    = $this->createMock(ContainerInterface::class);
+        $invokedCount = self::exactly(2);
+        $container->expects($invokedCount)
             ->method('get')
             ->willReturnCallback(
-                static function (string $id) use ($matcher, $config, $acl): mixed {
-                    $invocation = $matcher->numberOfInvocations();
+                static function (string $id) use ($invokedCount, $config, $acl): mixed {
+                    $invocation = $invokedCount->numberOfInvocations();
 
                     match ($invocation) {
                         1 => self::assertSame('config', $id, (string) $invocation),
@@ -672,7 +640,7 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
@@ -681,7 +649,7 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -704,13 +672,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
@@ -751,9 +717,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -775,7 +739,7 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
@@ -784,7 +748,7 @@ final class LaminasAclFactoryTest extends TestCase
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -809,13 +773,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
@@ -858,9 +820,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -882,14 +842,14 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'1\' not found');
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -917,13 +877,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
@@ -989,9 +947,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -1013,12 +969,12 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
+        $authorization = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $authorization);
     }
 
     /**
@@ -1041,13 +997,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
@@ -1090,9 +1044,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -1114,14 +1066,14 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'read\' not found');
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 
     /**
@@ -1152,9 +1104,7 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl     = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl     = $this->createMock(Acl::class);
         $matcher = self::exactly(5);
         $acl->expects($matcher)
             ->method('hasRole')
@@ -1262,9 +1212,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -1286,12 +1234,12 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
+        $authorization = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $authorization);
     }
 
     /**
@@ -1327,9 +1275,7 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl     = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl     = $this->createMock(Acl::class);
         $matcher = self::exactly(6);
         $acl->expects($matcher)
             ->method('hasRole')
@@ -1442,9 +1388,7 @@ final class LaminasAclFactoryTest extends TestCase
             ->method('deny')
             ->with('administrator', 'admin.posts', ['write', 'edit']);
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -1466,12 +1410,12 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $laminasAcl = $factory($container);
+        $authorization = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
+        self::assertInstanceOf(LaminasAcl::class, $authorization);
     }
 
     /**
@@ -1494,13 +1438,11 @@ final class LaminasAclFactoryTest extends TestCase
             ],
         ];
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasRole')
             ->with('administrator')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::once())
             ->method('addRole')
             ->with('administrator');
@@ -1543,9 +1485,7 @@ final class LaminasAclFactoryTest extends TestCase
         $acl->expects(self::never())
             ->method('deny');
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('get')
@@ -1567,13 +1507,13 @@ final class LaminasAclFactoryTest extends TestCase
         $container->expects(self::never())
             ->method('has');
 
-        $factory = new LaminasAclFactory();
+        $laminasAclFactory = new LaminasAclFactory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Resource \'read\' not found');
         $this->expectExceptionCode(0);
 
         assert($container instanceof ContainerInterface);
-        $factory($container);
+        $laminasAclFactory($container);
     }
 }
