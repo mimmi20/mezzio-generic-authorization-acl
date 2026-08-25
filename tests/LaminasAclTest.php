@@ -14,7 +14,6 @@ declare(strict_types = 1);
 namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
-use PHPUnit\Event\NoPreviousThrowableException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +23,6 @@ final class LaminasAclTest extends TestCase
 {
     /**
      * @throws Exception
-     * @throws NoPreviousThrowableException
      * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testConstructor(): void
@@ -42,13 +40,11 @@ final class LaminasAclTest extends TestCase
         $role     = 'foo';
         $resource = 'bar';
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasResource')
             ->with($resource)
-            ->willReturn(false);
+            ->willReturn(value: false);
         $acl->expects(self::never())
             ->method('isAllowed');
 
@@ -64,17 +60,15 @@ final class LaminasAclTest extends TestCase
         $role     = 'foo';
         $resource = 'bar';
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::once())
             ->method('hasResource')
             ->with($resource)
-            ->willReturn(true);
+            ->willReturn(value: true);
         $acl->expects(self::once())
             ->method('isAllowed')
             ->with($role, $resource)
-            ->willReturn(true);
+            ->willReturn(value: true);
 
         assert($acl instanceof Acl);
         $laminasAcl = new LaminasAcl($acl);
@@ -87,9 +81,7 @@ final class LaminasAclTest extends TestCase
     {
         $role = 'foo';
 
-        $acl = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $acl = $this->createMock(Acl::class);
         $acl->expects(self::never())
             ->method('isAllowed');
 
