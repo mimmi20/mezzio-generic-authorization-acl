@@ -15,7 +15,6 @@ namespace Mimmi20\Mezzio\GenericAuthorization\Acl;
 
 use Laminas\Permissions\Acl\Acl;
 use Laminas\Permissions\Acl\Exception\InvalidArgumentException;
-use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
 use Mimmi20\Mezzio\GenericAuthorization\Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -31,7 +30,7 @@ final class LaminasAclFactory
      * @throws Exception\InvalidConfigException
      * @throws ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): AuthorizationInterface
+    public function __invoke(ContainerInterface $container): LaminasAcl
     {
         try {
             $config = $container->get('config');
