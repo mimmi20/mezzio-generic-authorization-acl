@@ -42,11 +42,10 @@
     "phpstan/phpstan-phpunit": "^2.0.18",
     "phpunit/phpunit": "^12.4.5",
     "rector/rector": "^2.6.6",
-    "rector/type-perfect": "^2.2.0",
     "shipmonk/composer-dependency-analyser": "^1.8.4",
     "symplify/phpstan-rules": "^14.10.0",
     "tomasvotruba/cognitive-complexity": "^1.2.0",
-    "tomasvotruba/type-coverage": "^2.2.1",
+    "tomasvotruba/type-coverage": "^2.3.6",
     "tomasvotruba/unused-public": "^2.2.0"
   },
   "conflict": {

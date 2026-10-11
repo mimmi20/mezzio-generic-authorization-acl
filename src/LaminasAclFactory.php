@@ -31,7 +31,7 @@ final class LaminasAclFactory
      * @throws Exception\InvalidConfigException
      * @throws ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): AuthorizationInterface
+    public function __invoke(ContainerInterface $container): LaminasAcl
     {
         try {
             $config = $container->get('config');
