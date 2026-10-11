@@ -119,10 +119,6 @@ parameters:
     - '~mixed given~'
     -
       identifier: argument.named
-    -
-      identifier: phpunit.noAssertFuncCallInTests
-    -
-      identifier: symplify.noDynamicName
 
 services:
   errorFormatter.sarif:
