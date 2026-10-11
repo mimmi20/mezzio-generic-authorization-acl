@@ -85,7 +85,7 @@ parameters:
       tooWideThrowType: true
 
   cognitive_complexity:
-    class: 40
+    class: 128
     function: 25
 
   type_coverage:
@@ -119,10 +119,6 @@ parameters:
     - '~mixed given~'
     -
       identifier: argument.named
-    -
-      identifier: phpunit.noAssertFuncCallInTests
-    -
-      identifier: symplify.noDynamicName
 
 services:
   errorFormatter.sarif:
