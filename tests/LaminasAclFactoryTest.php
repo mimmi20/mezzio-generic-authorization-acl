@@ -189,9 +189,9 @@ final class LaminasAclFactoryTest extends TestCase
         $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $authorization = $laminasAclFactory($container);
+        $laminasAcl = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $authorization);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
@@ -326,9 +326,9 @@ final class LaminasAclFactoryTest extends TestCase
         $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $authorization = $laminasAclFactory($container);
+        $laminasAcl = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $authorization);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
@@ -972,9 +972,9 @@ final class LaminasAclFactoryTest extends TestCase
         $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $authorization = $laminasAclFactory($container);
+        $laminasAcl = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $authorization);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
@@ -1237,9 +1237,9 @@ final class LaminasAclFactoryTest extends TestCase
         $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $authorization = $laminasAclFactory($container);
+        $laminasAcl = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $authorization);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
@@ -1413,9 +1413,9 @@ final class LaminasAclFactoryTest extends TestCase
         $laminasAclFactory = new LaminasAclFactory();
 
         assert($container instanceof ContainerInterface);
-        $authorization = $laminasAclFactory($container);
+        $laminasAcl = $laminasAclFactory($container);
 
-        self::assertInstanceOf(LaminasAcl::class, $authorization);
+        self::assertInstanceOf(LaminasAcl::class, $laminasAcl);
     }
 
     /**
